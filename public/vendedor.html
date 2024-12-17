@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vendedor - Mis Tickets</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <header>
+    <img class="logo-page" src="./assets/ISOLOGO blanco (1).png" alt="">
+    <h1 id="tituloVendedor">Vendedor - Crear Ticket</h1>
+  </header>
+  
+  <section class="crear-ticket">
+    <form id="ticketForm">
+      <div class="form-group">
+        <label>Chasis</label>
+        <input type="text" name="chasis" required>
+      </div>
+      <div class="form-group">
+        <label>Cód/Pos</label>
+        <input type="text" name="cod_pos" required>
+      </div>
+      <div class="form-group">
+        <label>Cantidad</label>
+        <input type="number" name="cant" required>
+      </div>
+      <div class="form-group">
+        <label>Cliente</label>
+        <input type="text" name="cliente" required>
+      </div>
+      <div class="form-group">
+        <label>Comentario</label>
+        <input type="text" name="comentario">
+      </div>
+      <button type="submit" class="btn">Crear Ticket</button>
+    </form>
+  </section>
+
+  <section class="mis-tickets">
+    <h2>Mis Tickets</h2>
+    <div id="ticketList"></div>
+  </section>
+
+  <script src="js/vendedor.js"></script>
+</body>
+</html>

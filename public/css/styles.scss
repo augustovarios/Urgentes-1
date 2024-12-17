@@ -1,0 +1,342 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #111; /* fondo global oscuro */
+    color: #eee; /* texto claro sobre fondo oscuro */
+  }
+  
+  header {
+    text-align: center;
+    background: #000; /* encabezado negro */
+    padding: 20px;
+    margin-bottom: 30px;
+  
+    h1 {
+      margin: 0;
+      font-size: 2em;
+      color: #ffd700; /* un amarillo tipo "gold" que resalta sobre el fondo oscuro */
+    }
+  }
+  
+  .logo{
+        width: 15rem;
+        height: 10rem;
+        // margin-right: 6rem;
+        &-page{
+            position:absolute;
+            left: 0;
+            top: 0;
+            margin: 0.5rem;
+            width: 4.5rem;
+        }
+  }
+
+
+  .crear-ticket, .mis-tickets, .urgentes-section {
+    background: #444; /* gris medio para contraste con el fondo */
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 1200px;
+    margin: 0 auto 20px auto; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  }
+  
+  .crear-ticket form, .resolver-form {
+    display: grid;
+    gap: 15px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+  
+    input, select {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background: #333;
+      color: #fff;
+    }
+  
+    input:focus, select:focus {
+      outline: 2px solid #ffd700;
+    }
+  }
+  
+  .btn {
+    padding: 10px 15px;
+    background: #ffd700;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.3s;
+  }
+  
+  .btn:hover {
+    background: #e6c200; /* un poco más oscuro para hover */
+  }
+  
+  .mis-tickets h2, .urgentes-section h2 {
+    text-align: left;
+    margin: 0 0 15px 0;
+    color: #fff;
+  }
+  
+  /* Estilos para los tickets */
+  .ticket-item {
+    background: #333; /* carta del ticket más oscura */
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    transition: transform 0.2s;
+  }
+  
+  .ticket-item:hover {
+    transform: translateY(-2px);
+  }
+  
+  .ticket-header {
+    cursor: pointer;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    background: #222; /* encabezado del ticket un poco más oscuro */
+    transition: background 0.3s;
+  }
+  
+  .ticket-header:hover {
+    background: #1a1a1a; 
+  }
+  
+  .estado-circulo {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    border: 2px solid #eee;
+  }
+  
+  .estado-verde {
+    background: #00c851; /* verde */
+  }
+  
+  .estado-naranja {
+    background: #ffbb33; /* naranja */
+  }
+  
+  .estado-rojo {
+    background: #ff4444; /* rojo */
+  }
+  
+  .ticket-info {
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  .ticket-detalle {
+    padding: 15px;
+    background: #444;
+    white-space: pre-line;
+    font-size: 14px;
+    color: #eee;
+  }
+  
+  .ticket-orig-data {
+    background: #555;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  
+    h3 {
+      margin-top: 0;
+      color: #ffd700;
+    }
+  
+    .ticket-table {
+      width: 100%;
+      border-collapse: collapse;
+      
+      th {
+        text-align: left;
+        background: #666;
+        padding: 8px;
+        border: 1px solid #555;
+        width: 150px;
+        color: #ffd700;
+      }
+  
+      td {
+        padding: 8px;
+        border: 1px solid #555;
+        color: #fff;
+      }
+  
+      tr:nth-child(even) {
+        background: #5c5c5c;
+      }
+    }
+  }
+  
+  /* Ajustes generales para mejorar la apariencia */
+  a, button {
+    font-family: inherit;
+  }
+  
+  .login-body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .login-container {
+    background: #222;
+    padding: 40px;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    text-align: center;
+    margin-left: 3rem;
+  }
+  
+  .login-container h1 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+    color: #ffd700; /* Un color dorado para resaltar el título */
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+  
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+  
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      background: #333;
+      color: #fff;
+      outline: none;
+    }
+  
+    input[type="text"]:focus, input[type="password"]:focus {
+      outline: 2px solid #ffd700;
+    }
+  
+    input::placeholder {
+      color: #aaa;
+    }
+  }
+  
+  .check-group {
+    margin-bottom: 20px;
+    text-align: left;
+  
+    .check-label {
+      color: #fff;
+      font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+  
+    input[type="checkbox"] {
+      margin-right: 5px;
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+  }
+  
+  .btn-login {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background: #ffd700;
+    color: #000;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .btn-login:hover {
+    background: #e6c200;
+  }
+  
+  header {
+    background: #000; // o el color oscuro que uses para tu encabezado
+    text-align: center;
+    padding: 20px;
+    border-bottom: 2px solid #ffd700; // una línea dorada debajo, opcional
+  
+    h1 {
+      margin: 0;
+      font-size: 2.2em;
+      font-weight: bold;
+      color: #ffd700; 
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.7); // agrega una ligera sombra para mayor profundidad
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      letter-spacing: 1px; // separa un poco las letras
+      text-transform: capitalize; // si quieres que se vea más elegante
+  
+      // Opcional: un efecto hover suave (aunque sea un título, no un link)
+      &:hover {
+        text-shadow: 2px 2px 10px rgba(255,215,0,0.9);
+      }
+    }
+  }
+  
+  .detalle-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  
+    th, td {
+      padding: 8px;
+      border: 1px solid #444; // Ajusta el color según tu esquema
+    }
+  
+    th {
+      text-align: left;
+      background: #333; // Fondo para el header
+      color: #ffd700;   // Texto dorado para encabezados
+      font-weight: bold;
+    }
+  
+    td {
+      background: #222; // Fondo oscuro para las celdas de datos
+      color: #fff;
+    }
+  
+    tr:nth-child(even) td {
+      background: #2a2a2a; // alternar ligeramente el fondo
+    }
+  }
+  
