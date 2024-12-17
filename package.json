@@ -1,19 +1,17 @@
 {
   "name": "urgentes",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "sass": "sass sass/styles.scss public/css/styles.css --watch"
+    "sass": "sass sass/styles.scss public/css/styles.css --watch",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "nodemon": "^3.1.9",
-    "sass": "^1.83.0"
-  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
@@ -21,5 +19,9 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "sass": "^1.83.0"
   }
 }
