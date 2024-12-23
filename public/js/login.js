@@ -16,7 +16,6 @@ loginForm.addEventListener('submit', async (e) => {
   const data = await res.json();
   if (res.ok) {
     const storage = rememberMeCheckbox.checked ? localStorage : sessionStorage;
-    
     storage.setItem('token', data.token);
     storage.setItem('role', data.role);
     storage.setItem('username', data.username);

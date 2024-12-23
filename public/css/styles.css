@@ -12,11 +12,20 @@ header {
   background: #000; /* encabezado negro */
   padding: 20px;
   margin-bottom: 30px;
+  border-bottom: 2px solid #ffd700;
 }
 header h1 {
   margin: 0;
-  font-size: 2em;
-  color: #ffd700; /* un amarillo tipo "gold" que resalta sobre el fondo oscuro */
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 1px;
+  text-transform: capitalize;
+}
+header h1:hover {
+  text-shadow: 2px 2px 10px rgba(255, 215, 0, 0.9);
 }
 
 .logo {
@@ -30,8 +39,13 @@ header h1 {
   margin: 0.5rem;
   width: 4.5rem;
 }
+.logo-page:hover {
+  filter: drop-shadow(0px 4px 6px rgb(246, 250, 1));
+}
 
-.crear-ticket, .mis-tickets, .urgentes-section {
+.crear-ticket,
+.mis-tickets,
+.urgentes-section {
   background: #444; /* gris medio para contraste con el fondo */
   padding: 20px;
   border-radius: 10px;
@@ -40,7 +54,16 @@ header h1 {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.crear-ticket form, .resolver-form {
+.mis-tickets h2,
+.urgentes-section h2 {
+  text-align: left;
+  margin: 0 0 15px 0;
+  color: #fff;
+}
+
+/* Formularios */
+.crear-ticket form,
+.resolver-form {
   display: grid;
   gap: 15px;
 }
@@ -48,6 +71,7 @@ header h1 {
 .form-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
 }
 .form-group label {
   font-weight: bold;
@@ -65,7 +89,8 @@ header h1 {
   outline: 2px solid #ffd700;
 }
 
-.btn {
+.btn,
+.btn-login {
   padding: 10px 15px;
   background: #ffd700;
   color: #000;
@@ -77,118 +102,15 @@ header h1 {
   transition: background 0.3s;
 }
 
-.btn:hover {
-  background: #e6c200; /* un poco más oscuro para hover */
+.btn:hover,
+.btn-login:hover {
+  background: #e6c200;
 }
 
-.mis-tickets h2, .urgentes-section h2 {
-  text-align: left;
-  margin: 0 0 15px 0;
-  color: #fff;
-}
-
-/* Estilos para los tickets */
-.ticket-item {
-  background: #333; /* carta del ticket más oscura */
-  border-radius: 8px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s;
-}
-
-.ticket-item:hover {
-  transform: translateY(-2px);
-}
-
-.ticket-header {
-  cursor: pointer;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  background: #222; /* encabezado del ticket un poco más oscuro */
-  transition: background 0.3s;
-}
-
-.ticket-header:hover {
-  background: #1a1a1a;
-}
-
-.estado-circulo {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 8px;
-  border: 2px solid #eee;
-}
-
-.estado-verde {
-  background: #00c851; /* verde */
-}
-
-.estado-naranja {
-  background: #ffbb33; /* naranja */
-}
-
-.estado-rojo {
-  background: #ff4444; /* rojo */
-}
-
-.ticket-info {
-  font-weight: bold;
-  font-size: 14px;
-  color: #fff;
-}
-
-.ticket-detalle {
-  padding: 15px;
-  background: #444;
-  white-space: pre-line;
-  font-size: 14px;
-  color: #eee;
-}
-
-.ticket-orig-data {
-  background: #555;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-}
-.ticket-orig-data h3 {
-  margin-top: 0;
-  color: #ffd700;
-}
-.ticket-orig-data .ticket-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.ticket-orig-data .ticket-table th {
-  text-align: left;
-  background: #666;
-  padding: 8px;
-  border: 1px solid #555;
-  width: 150px;
-  color: #ffd700;
-}
-.ticket-orig-data .ticket-table td {
-  padding: 8px;
-  border: 1px solid #555;
-  color: #fff;
-}
-.ticket-orig-data .ticket-table tr:nth-child(even) {
-  background: #5c5c5c;
-}
-
-/* Ajustes generales para mejorar la apariencia */
-a, button {
-  font-family: inherit;
-}
-
+/* Login */
 .login-body {
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #111;
   display: flex;
   justify-content: center;
@@ -205,42 +127,11 @@ a, button {
   text-align: center;
   margin-left: 3rem;
 }
-
 .login-container h1 {
   margin-top: 0;
   margin-bottom: 30px;
   font-size: 1.8em;
-  color: #ffd700; /* Un color dorado para resaltar el título */
-}
-
-.form-group {
-  margin-bottom: 20px;
-  text-align: left;
-}
-.form-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #fff;
-}
-.form-group input[type=text],
-.form-group input[type=password] {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  background: #333;
-  color: #fff;
-  outline: none;
-}
-.form-group input[type=text]:focus, .form-group input[type=password]:focus {
-  outline: 2px solid #ffd700;
-}
-.form-group input::-moz-placeholder {
-  color: #aaa;
-}
-.form-group input::placeholder {
-  color: #aaa;
+  color: #ffd700;
 }
 
 .check-group {
@@ -262,41 +153,127 @@ a, button {
 
 .btn-login {
   width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 5px;
+}
+
+/* Botón logout */
+#logoutBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 1.5rem;
   background: #ffd700;
   color: #000;
-  font-weight: bold;
-  font-size: 1em;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  padding: 10px 17px;
+}
+
+.logoLogOut {
+  width: 15px;
+  height: 15px;
+}
+
+/* Tickets en "modo card" - si se usan */
+.ticket-item {
+  background: #333;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s;
+}
+.ticket-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Acordeón: QUITAMOS display: flex; para no romper la tabla */
+.ticket-header {
+  cursor: pointer;
+  /* OJO: si es un <tr> en la tabla, no usar display:flex */
+  background: #222;
   transition: background 0.3s;
+  padding: 15px; /* si fuera un row tipo card, no en tabla, lo mantienes */
+}
+.ticket-header:hover {
+  background: #1a1a1a;
 }
 
-.btn-login:hover {
-  background: #e6c200;
+/* Fila de detalle del acordeón */
+.ticket-detalle {
+  padding: 15px;
+  background: #444;
+  white-space: pre-line;
+  font-size: 14px;
+  color: #eee;
+}
+.ticket-detalle td {
+  background-color: #1f1f1f;
 }
 
-header {
-  background: #000;
-  text-align: center;
-  padding: 20px;
-  border-bottom: 2px solid #ffd700;
+/* Círculos de estado */
+.estado-circulo {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  border: 2px solid #eee;
 }
-header h1 {
-  margin: 0;
-  font-size: 2.2em;
+
+.estado-verde {
+  background: #00c851;
+}
+
+.estado-naranja {
+  background: #ffbb33;
+}
+
+.estado-rojo {
+  background: #ff4444;
+}
+
+/* Información en el header del ticket */
+.ticket-info {
   font-weight: bold;
-  color: #ffd700;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  letter-spacing: 1px;
-  text-transform: capitalize;
-}
-header h1:hover {
-  text-shadow: 2px 2px 10px rgba(255, 215, 0, 0.9);
+  font-size: 14px;
+  color: #fff;
 }
 
+/* Tabla interna cuando está 'pendiente' */
+.ticket-orig-data {
+  background: #242424;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+.ticket-orig-data h3 {
+  font-size: 1.5rem;
+  margin-top: 0;
+  color: #ffd700;
+}
+.ticket-orig-data .ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ticket-orig-data .ticket-table th {
+  text-align: left;
+  background: #333;
+  padding: 8px;
+  border: 1px solid #555;
+  width: 150px;
+  color: #ffd700;
+}
+.ticket-orig-data .ticket-table td {
+  padding: 8px;
+  border: 1px solid #555;
+  color: #fff;
+}
+.ticket-orig-data .ticket-table tr:nth-child(even) {
+  background: #5c5c5c;
+}
+
+/* Tabla interna para el ticket resuelto */
 .detalle-table {
   width: 100%;
   border-collapse: collapse;
@@ -318,4 +295,133 @@ header h1:hover {
 }
 .detalle-table tr:nth-child(even) td {
   background: #2a2a2a;
+}
+
+/* TABLA PRINCIPAL (tickets-table) */
+.tickets-table {
+  width: 100%;
+  border-collapse: collapse; /* para líneas continuas */
+  margin-top: 10px;
+}
+.tickets-table thead th {
+  background-color: #333;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #444;
+}
+.tickets-table tbody td {
+  border: 1px solid #444;
+  padding: 10px;
+  background-color: #2c2c2c;
+  color: #ccc;
+}
+.tickets-table tbody tr:nth-child(even) td {
+  background-color: #242424;
+}
+
+/* Contenedor para scroll horizontal, si hace falta */
+.table-container {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+/* Estilos específicos para el filtro */
+.search-bar {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  color: #fff;
+  background-color: #2c2c2c;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s;
+}
+.search-bar:focus {
+  outline: none;
+  box-shadow: 0px 0px 6px rgba(255, 215, 0, 0.5);
+}
+.search-bar::-moz-placeholder {
+  color: #aaa;
+}
+.search-bar::placeholder {
+  color: #aaa;
+}
+
+/* Estilo cuando el acordeón está abierto */
+.ticket-header.acordeon-open {
+  background-color: #4b4b4b; /* un gris un poco más claro, por ejemplo */
+  color: #ffd700; /* texto dorado para resaltar */
+  transition: background 0.3s;
+}
+
+/* (Opcional) Cambia también el color de los <td> dentro */
+.ticket-header.acordeon-open td {
+  background-color: inherit; /* hereda el #2d2d2d */
+  color: inherit;
+}
+
+@media (max-width: 768px) {
+  .login-body {
+    display: flex;
+    flex-direction: column;
+  }
+  .login-container {
+    margin: 0;
+  }
+  header {
+    background: #000;
+    margin-bottom: 5px;
+    padding: 3rem;
+    border-bottom: none;
+  }
+  header h1 {
+    display: none;
+  }
+  .logo-page:hover {
+    filter: none;
+  }
+  .search-bar {
+    width: 50%;
+  }
+  .search-bar:hover {
+    box-shadow: none;
+  }
+  /* Ocultamos encabezados de columna */
+  .tickets-table thead {
+    display: none;
+  }
+  /* Hacemos que table, tbody, tr, td se comporten como bloques */
+  .tickets-table,
+  .tickets-table tbody,
+  .tickets-table tr,
+  .tickets-table td {
+    display: block;
+  }
+  /* Alineamos texto a la derecha y dejamos espacio para data-label */
+  .tickets-table td {
+    position: relative;
+    border: 1px solid #444;
+  }
+  /* Mostramos un label antes de cada td, usando data-label */
+  .tickets-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    text-align: left;
+    font-weight: bold;
+    /* Ajusta color, margen, etc. a tu gusto */
+  }
+  .ticket-header {
+    margin-bottom: 10px;
+  }
+  .ticket-header.acordeon-open {
+    background-color: #242424;
+    color: #ffd700;
+    transition: background 0.3s;
+  }
 }/*# sourceMappingURL=styles.css.map */

@@ -1,8 +1,10 @@
+// src/controllers/ticketController.js
 const Ticket = require('../models/Ticket');
 
 exports.createTicket = async (req, res) => {
   const { chasis, cod_pos, cant, comentario, cliente } = req.body;
 
+  // Solo Vendedor
   if (req.user.role !== 'vendedor') {
     return res.status(403).json({ error: 'Solo un vendedor puede crear tickets' });
   }
@@ -19,12 +21,13 @@ exports.createTicket = async (req, res) => {
     await ticket.save();
     res.status(201).json(ticket);
   } catch (error) {
-    console.error(error);
+    console.error('createTicket -> Error al crear ticket:', error);
     res.status(500).json({ error: 'Error al crear el ticket' });
   }
 };
 
 exports.getMyTickets = async (req, res) => {
+  // Solo Vendedor
   if (req.user.role !== 'vendedor') {
     return res.status(403).json({ error: 'Acceso no autorizado' });
   }
@@ -33,32 +36,46 @@ exports.getMyTickets = async (req, res) => {
     const tickets = await Ticket.find({ usuario: req.user.id }).sort({ fecha: -1 });
     res.json(tickets);
   } catch (error) {
-    console.error(error);
+    console.error('getMyTickets -> Error al obtener tickets:', error);
     res.status(500).json({ error: 'Error al obtener tickets' });
   }
 };
 
 exports.getAllTickets = async (req, res) => {
+  // Solo Compras
   if (req.user.role !== 'compras') {
     return res.status(403).json({ error: 'Acceso no autorizado' });
   }
 
   try {
-    const tickets = await Ticket.find({}).sort({ fecha: -1 }).populate('usuario', 'username');
+    const tickets = await Ticket.find({})
+      .sort({ fecha: -1 })
+      .populate('usuario', 'username');
     res.json(tickets);
   } catch (error) {
-    console.error(error);
+    console.error('getAllTickets -> Error al obtener todos los tickets:', error);
     res.status(500).json({ error: 'Error al obtener todos los tickets' });
   }
 };
 
 exports.resolveTicket = async (req, res) => {
+  // Solo Compras
   if (req.user.role !== 'compras') {
     return res.status(403).json({ error: 'Acceso no autorizado' });
   }
 
   const { id } = req.params;
-  const { resolucion, codigo, cantidad_resuelta, proveedor, ingreso, comentario_resolucion, avisado, pago, estado } = req.body;
+  const {
+    resolucion,
+    codigo,
+    cantidad_resuelta,
+    proveedor,
+    ingreso,
+    comentario_resolucion,
+    avisado,
+    pago,
+    estado
+  } = req.body;
 
   try {
     const ticket = await Ticket.findById(id);
@@ -79,7 +96,7 @@ exports.resolveTicket = async (req, res) => {
     await ticket.save();
     res.json(ticket);
   } catch (error) {
-    console.error(error);
+    console.error('resolveTicket -> Error al actualizar el ticket:', error);
     res.status(500).json({ error: 'Error al actualizar el ticket' });
   }
 };

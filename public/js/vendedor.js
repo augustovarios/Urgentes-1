@@ -14,6 +14,21 @@ if (username) {
   console.error('No se encontró el nombre de usuario en localStorage');
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      localStorage.removeItem('username');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('role');
+      sessionStorage.removeItem('username');
+      window.location.href = 'index.html';
+    });
+  }
+});
+
 const ticketForm = document.getElementById('ticketForm');
 const ticketList = document.getElementById('ticketList');
 
