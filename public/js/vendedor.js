@@ -109,9 +109,87 @@ async function fetchMyTickets() {
 
     let detalleContent = '';
     if (ticket.estado === 'pendiente') {
-      detalleContent = 'Este ticket aún no ha sido resuelto.';
+      detalleContent = `
+      <div class="ticket-orig-data">
+          <h3>Detalles del Urgente</h3>
+          <table class="ticket-table">
+            <tr><th>CHASIS</th><td>${ticket.chasis}</td></tr>
+            <tr><th>COD/POS</th><td>${ticket.cod_pos}</td></tr>
+            <tr><th>CANT</th><td>${ticket.cant}</td></tr>
+            <tr><th>CLIENTE</th><td>${ticket.cliente}</td></tr>
+            <tr><th>COMENTARIO</th><td>${ticket.comentario || 'N/A'}</td></tr>
+            <tr><th>AVISADO</th><td>${ticket.avisado ? 'Sí' : 'No'}</td></tr>
+            <tr><th>PAGO</th><td>${ticket.pago ? 'Sí' : 'No'}</td></tr>
+          </table>
+      </div>
+          <form class="resolver-form" data-ticket-id="${ticket._id}">
+          <div class="form-group">
+          <label>¿Avisado?</label>
+          <select name="avisado">
+            <option value="false">No</option>
+            <option value="true">Sí</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>¿Pago?</label>
+          <select name="pago">
+            <option value="false">No</option>
+            <option value="true">Sí</option>
+          </select>
+        </div>
+        <button type="submit" class="btn">Guardar</button>
+      </form>
+    `;
+    
+    ticketDetalle.innerHTML = detalleContent;
+    
+    const resolverForm = ticketDetalle.querySelector('.resolver-form');
+    if (resolverForm) {
+      resolverForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(resolverForm);
+    
+        const payload = {
+          avisado: formData.get('avisado') === 'true',
+          pago: formData.get('pago') === 'true',
+        };
+    
+        const ticketId = resolverForm.dataset.ticketId;
+        const patchRes = await fetch(`/tickets/${ticketId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+    
+        const patchData = await patchRes.json();
+        if (patchRes.ok) {
+          alert('Ticket actualizado con éxito.');
+          fetchMyTickets();
+        } else {
+          alert(patchData.error || 'Error al actualizar el ticket');
+        }
+      });
+    }
+    
+    
+
     } else if (ticket.estado === 'negativo') {
-      detalleContent = 'Este ticket no pudo resolverse.';
+      detalleContent =  `
+      <div class="ticket-orig-data">
+          <h3>Detalles del Urgente</h3>
+          <table class="ticket-table">
+            <tr><th>RESOLUCIÓN</th><td>${ticket.resolucion || 'N/A'}</td></tr>
+            <tr><th>PROVEEDOR</th><td>${ticket.proveedor || 'N/A'}</td></tr>
+            <tr><th>INGRESO</th><td>${ticket.ingreso || 'N/A'}</td></tr>
+            <tr><th>COMENTARIO</th><td>${ticket.comentario_resolucion || 'N/A'}</td></tr>
+            <tr><th>AVISADO</th><td>${ticket.avisado ? 'Sí' : 'No'}</td></tr>
+            <tr><th>PAGO</th><td>${ticket.pago ? 'Sí' : 'No'}</td></tr>
+          </table>
+        </div>
+    `;
     } else if (ticket.estado === 'resuelto') {
       detalleContent = `
       <table class="detalle-table">

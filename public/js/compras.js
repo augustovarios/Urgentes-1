@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const comprasTicketList = document.getElementById('comprasTicketList');
-const filterInput = document.getElementById('filterInput');
 
 // Variable global para almacenar todos los tickets
 let allTickets = [];
@@ -38,7 +37,7 @@ function renderTickets(tickets) {
           <th>FECHA</th>
           <th>USUARIO</th>
           <th>CHASIS</th>
-          <th>COD/POS</th>
+          <th id="sortCodPos">COD/POS</th>
           <th>CANT</th>
           <th>CLIENTE</th>
           <th>COMENTARIO</th>
@@ -240,6 +239,7 @@ function renderTickets(tickets) {
   });
 }
 
+
 // 2) Descargamos (fetch) los tickets y guardamos en allTickets
 async function fetchAllTickets() {
   try {
@@ -256,22 +256,31 @@ async function fetchAllTickets() {
 
 fetchAllTickets();
 
-// 3) Filtro: escuchamos al evento keyup y filtramos en base a allTickets
-filterInput.addEventListener('keyup', () => {
+const filterInput = document.getElementById('filterInput');
+
+const estadoFiltro = document.getElementById('estadoFiltro');
+
+// Función que aplica ambos filtros: por texto y por estado
+function applyFilters() {
   const searchValue = filterInput.value.toLowerCase();
+  const selectedEstado = estadoFiltro.value; // 'pendiente', 'resuelto', 'negativo' o ''
 
-  // Si el filtro está vacío, mostrar todo
-  if (!searchValue) {
-    renderTickets(allTickets);
-    return;
-  }
-
-  // Filtramos comparando el valor ingresado con todos los campos del ticket
-  const filtered = allTickets.filter(ticket => {
-    // Combina todo el ticket en un string y busca el término
+  // 1) Filtro por texto
+  let filteredTickets = allTickets.filter(ticket => {
     return JSON.stringify(ticket).toLowerCase().includes(searchValue);
   });
 
-  // Volvemos a renderizar, pero solo con los tickets filtrados
-  renderTickets(filtered);
-});
+  // 2) Filtro por estado (solo si está seleccionado alguno)
+  if (selectedEstado) {
+    filteredTickets = filteredTickets.filter(ticket => ticket.estado === selectedEstado);
+  }
+
+  // Finalmente, renderizamos
+  renderTickets(filteredTickets);
+}
+
+// Cuando se escribe en el input de texto, aplicamos filtros
+filterInput.addEventListener('keyup', applyFilters);
+
+// Cuando cambia el <select> de estado, aplicamos filtros
+estadoFiltro.addEventListener('change', applyFilters);

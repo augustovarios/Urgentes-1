@@ -365,6 +365,34 @@ header h1:hover {
   color: inherit;
 }
 
+.filtro-estado-container {
+  margin-bottom: 15px;
+  margin-left: 10px;
+  display: inline-block;
+  color: #fff;
+}
+
+.filtro-estado-container label {
+  margin-right: 2px;
+  font-weight: bold;
+}
+
+/* Estilo para el <select> */
+.filtro-estado-container select {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 5px 10px;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+.filtro-estado-container option {
+  background-color: #333;
+  color: #fff;
+}
+
 @media (max-width: 768px) {
   .login-body {
     display: flex;

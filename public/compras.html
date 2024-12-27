@@ -17,8 +17,18 @@
   <section class="urgentes-section">
     <h2>Todos los Tickets</h2>
     <input class="search-bar" type="text" id="filterInput" placeholder="Buscar">
+    <div class="filtro-estado-container">
+      <label for="estadoFiltro">Filtrar por estado:</label>
+      <select id="estadoFiltro">
+        <option value="">(Ver todos)</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="resuelto">Resuelto</option>
+        <option value="negativo">Negativo</option>
+      </select>
+    </div>
     <div id="comprasTicketList"></div>
   </section>
   <script src="js/compras.js"></script>
 </body>
 </html>
+
