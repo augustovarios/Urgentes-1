@@ -18,7 +18,11 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.1"
+    "jwt-decode": "^4.0.0",
+    "mongoose": "^8.9.1",
+    "node-cron": "^3.0.3",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9",

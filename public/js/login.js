@@ -20,6 +20,10 @@ loginForm.addEventListener('submit', async (e) => {
     storage.setItem('role', data.role);
     storage.setItem('username', data.username);
 
+    // Decodificar el token JWT para obtener el userId
+    const decodedToken = JSON.parse(atob(data.token.split('.')[1]));
+    storage.setItem('userId', decodedToken.userId); // Guardar el userId en el almacenamiento
+
     if (data.role === 'vendedor') {
       window.location.href = 'vendedor.html';
     } else if (data.role === 'compras') {

@@ -9,8 +9,6 @@ const TicketSchema = new mongoose.Schema({
   cliente: { type: String, required: true },
   usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   estado: { type: String, default: 'pendiente', enum: ['pendiente', 'resuelto', 'negativo'] },
-  
-  // Campos de resolución
   resolucion: { type: String },
   codigo: { type: String },
   cantidad_resuelta: { type: Number },
@@ -18,7 +16,18 @@ const TicketSchema = new mongoose.Schema({
   ingreso: { type: String },
   comentario_resolucion: { type: String },
   avisado: { type: Boolean, default: false },
-  pago: { type: Boolean, default: false }
+  pago: { type: Boolean, default: false },
+  comentarios: [
+    {
+      texto: { type: String, required: true },
+      fecha: { type: Date, default: Date.now },
+      usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    },
+  ],
+  nuevosComentarios: {
+    vendedor: { type: Boolean, default: false },
+    compras: { type: Boolean, default: false },
+  },
 });
 
 module.exports = mongoose.model('Ticket', TicketSchema);
