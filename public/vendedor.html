@@ -8,31 +8,47 @@
 </head>
 <body>
   <header>
-    <img class="logo-page" src="./assets/ISOLOGO blanco (1).png" alt="">
-    <h1 id="tituloVendedor">Vendedor - Crear Ticket</h1>
-    <a id="logoutBtn"><img class="logoLogOut" src="./assets/cerrar-sesion.svg" alt=""></a>
+    <img class="logo-page" src="./assets/ISOLOGO blanco (1).png" alt="Logo" />
+    <h1 id="tituloVendedor">Vendedor - Crear Urgente</h1>
+    <a id="logoutBtn">
+      <img class="logoLogOut" src="./assets/cerrar-sesion.svg" alt="Cerrar sesión" />
+    </a>
   </header>
-  <section class="crear-ticket">
+<div id="inAppAlert" class="alert-overlay" style="display: none;">
+  <div class="alert-box">
+    <span id="alertMessage"></span>
+    <button id="alertCloseBtn" class="alert-close-btn">Cerrar</button>
+  </div>
+</div>
+
+
+  <!-- Encabezado del acordeón -->
+  <div id="toggleCrearTicket" style="cursor: pointer; background: #333; padding: 10px;">
+    <h2 style="margin: 0; color: #ffd700;">Crear Urgente</h2>
+  </div>
+
+  <!-- Sección colapsada (inicio oculto) -->
+  <section class="crear-ticket" id="crearTicketSection" style="display: none;">
     <form id="ticketForm">
       <div class="form-group">
         <label>Chasis</label>
-        <input type="text" name="chasis" required>
+        <input type="text" name="chasis" required />
       </div>
       <div class="form-group">
         <label>Cód/Pos</label>
-        <input type="text" name="cod_pos" required>
+        <input type="text" name="cod_pos" required />
       </div>
       <div class="form-group">
         <label>Cantidad</label>
-        <input type="number" name="cant" required>
+        <input type="number" name="cant" required />
       </div>
       <div class="form-group">
         <label>Cliente</label>
-        <input type="text" name="cliente" required>
+        <input type="text" name="cliente" required />
       </div>
       <div class="form-group">
         <label>Comentario</label>
-        <input type="text" name="comentario">
+        <input type="text" name="comentario" />
       </div>
       <button type="submit" class="btn">Crear Ticket</button>
     </form>
@@ -40,6 +56,27 @@
 
   <section class="mis-tickets">
     <h2>Mis Tickets</h2>
+    <input class="search-bar" type="text" id="filterInput" placeholder="Buscar">
+    <div class="filtro-estado-container">
+      <label for="estadoFiltro">Filtrar por estado:</label>
+      <select id="estadoFiltro">
+        <option value="">(Ver todos)</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="resuelto">Resuelto</option>
+        <option value="negativo">Negativo</option>
+      </select>
+      <label for="estadoFiltro">Filtrar por Avisado/Pago:</label>
+      <select id="avisadoFiltro" class="filter-select">
+        <option value="">-- Filtrar por Avisado --</option>
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+      </select>
+      <select id="pagoFiltro" class="filter-select">
+        <option value="">-- Filtrar por Pago --</option>
+        <option value="true">Sí</option>
+        <option value="false">No</option>
+      </select>
+    </div>
     <div id="ticketList"></div>
   </section>
 

@@ -44,13 +44,11 @@ header h1:hover {
   filter: drop-shadow(0px 4px 6px rgb(246, 250, 1));
 }
 
-.crear-ticket,
-.mis-tickets,
-.urgentes-section {
+.mis-tickets, .crear-ticket, .urgentes-section {
   background: #444; /* gris medio para contraste con el fondo */
   padding: 20px;
   border-radius: 10px;
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto 20px auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
@@ -67,6 +65,10 @@ header h1:hover {
 .resolver-form {
   display: grid;
   gap: 15px;
+}
+
+.resolver-form .btn {
+  margin-bottom: 1rem;
 }
 
 .form-group {
@@ -426,6 +428,7 @@ header h1:hover {
   position: relative;
   font-size: 14px;
   line-height: 1.5;
+  padding: 10px;
 }
 
 /* Comentarios del usuario actual */
@@ -495,8 +498,22 @@ header h1:hover {
   background-color: red;
   border-radius: 50%;
   display: inline-block;
+  position: relative;
+  animation: pulse 1.5s infinite;
 }
 
+/* Efecto de pulsación */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
 .search-bar {
   width: 100%;
   max-width: 400px;
@@ -511,10 +528,315 @@ header h1:hover {
   transition: box-shadow 0.3s;
 }
 
-.ticket-header.acordeon-open {
-  background-color: #4b4b4b;
+.ticket-header.open td {
+  background-color: #161616;
+  color: #FFD700;
+}
+
+.ticket-header:hover td {
+  background-color: #252525;
+  color: #ffffff;
+  transition: background-color 0.3s;
+}
+.ticket-header.open:hover td {
+  background-color: #161616;
+  color: #e2c001;
+  transition: background-color 0.3s;
+}
+
+.circle-green {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #00b300; /* verde */
+}
+
+.circle-red {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ff0000; /* rojo */
+}
+
+/* Tabla principal */
+.tickets-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+/* Encabezado y celdas */
+.tickets-table th,
+.tickets-table td {
+  border: 1px solid #444;
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+  /* Por defecto, a la izquierda, excepto para las clases center-col */
+  text-align: left;
+}
+
+/* Centrar columnas específicas */
+.center-col {
+  text-align: center !important;
+}
+
+.left-col {
+  text-align: left !important;
+}
+
+/* Resaltar la fila al pasar el mouse (opcional) */
+.tickets-table tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Estados (revisa que tus .estado-verde, .estado-rojo, .estado-naranja tengan sentido con tu tema) */
+.estado-circulo {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.estado-verde {
+  background-color: #2ecc71; /* verde */
+}
+
+.estado-rojo {
+  background-color: #e74c3c; /* rojo */
+}
+
+.estado-naranja {
+  background-color: orange; /* naranja */
+}
+
+/* Para "Sí" en verde, "No" en rojo */
+.si-verde {
+  color: #2ecc71 !important; /* verde */
+  font-weight: bold;
+}
+
+.no-rojo {
+  color: #e74c3c !important; /* rojo */
+  font-weight: bold;
+}
+
+/* Indicador de notificaciones */
+.new-indicator .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #e74c3c; /* rojo */
+}
+
+/* Ajustes a la tabla de detalle (opcional) */
+.ticket-detalle td {
+  /* Podrías dejarlo left-col o un padding mayor si gustas */
+  text-align: left;
+  padding: 0.5rem 1rem;
+}
+
+/* Ejemplo para la sección "comments-section" */
+.comments-section {
+  margin-top: 1rem;
+}
+
+.comments-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Estilos de formulario en el detalle */
+.edit-form, .comment-form {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.edit-form .form-group,
+.comment-form textarea {
+  flex: 1 1 auto;
+}
+
+.edit-form .btn {
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+/* Encabezado del acordeón (el div con id="toggleCrearTicket") */
+#toggleCrearTicket {
+  cursor: pointer;
+  width: 80%;
+  background-color: #333;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 0 auto 15px auto;
+  transition: background-color 0.3s;
+}
+
+#toggleCrearTicket:hover {
+  background-color: #444 !important;
+}
+
+#toggleCrearTicket h2 {
+  margin: 0;
   color: #ffd700;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+/* Sección colapsable (el <section id="crearTicketSection">) */
+#crearTicketSection {
+  width: 70%;
+  margin: 0 auto 20px auto;
+  padding: 20px;
+  background-color: #444;
+  border-radius: 8px;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  overflow: hidden;
+}
+
+/* Ejemplo de un efecto “desplegable” suave */
+#crearTicketSection.collapsed {
+  opacity: 0;
+  max-height: 0;
+  padding: 0 20px; /* Para que no se vea raro el padding */
+}
+
+/* Si la sección está abierta, le quitas la clase .collapsed */
+#crearTicketSection.opened {
+  opacity: 1;
+  max-height: 600px; /* Ajusta según el contenido */
+  padding: 20px;
+}
+
+/* Opcional: estilos del formulario dentro */
+#crearTicketSection form {
+  display: grid;
+  gap: 15px;
+}
+
+#crearTicketSection .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+#crearTicketSection .form-group label {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+#crearTicketSection .form-group input {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #333;
+  color: #fff;
+}
+
+#crearTicketSection .form-group input:focus {
+  outline: 2px solid #ffd700;
+}
+
+#crearTicketSection .btn {
+  padding: 10px 15px;
+  background: #ffd700;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
   transition: background 0.3s;
+}
+
+#crearTicketSection .btn:hover {
+  background: #e6c200;
+}
+
+#crearTicketSection {
+  opacity: 1;
+  max-height: 600px; /* Altura ajustada según el contenido */
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+/* Fondo semitransparente detrás de la alerta */
+.alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Caja de la alerta */
+.alert-box {
+  background: #333;
+  color: #ffd700;
+  padding: 20px 30px;
+  border-radius: 8px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  position: relative;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Texto de la alerta */
+.alert-box span {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  color: #fff;
+}
+
+/* Botón para cerrar */
+.alert-close-btn {
+  background: #ffd700;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  padding: 8px 16px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.3s;
+}
+
+.alert-close-btn:hover {
+  background: #e6c200;
+}
+
+.tickets-table td {
+  white-space: nowrap; /* Evita que el texto se desplace a otra línea */
+  overflow: hidden; /* Oculta el texto que excede el ancho */
+  text-overflow: ellipsis; /* Muestra puntos suspensivos (...) si el texto es demasiado largo */
+  max-width: 200px; /* Ajusta este valor según el diseño de tu tabla */
+}
+
+.tickets-table th {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.tickets-table {
+  table-layout: fixed; /* Hace que las columnas tengan un ancho fijo */
+  width: 100%;
 }
 
 @media (max-width: 768px) {

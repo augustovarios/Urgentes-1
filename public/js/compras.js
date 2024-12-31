@@ -2,10 +2,12 @@ let token = localStorage.getItem('token') || sessionStorage.getItem('token');
 let role = localStorage.getItem('role') || sessionStorage.getItem('role');
 let username = localStorage.getItem('username') || sessionStorage.getItem('username');
 
+// Si no hay token o no es rol "compras", se redirige
 if (!token || role !== 'compras') {
   window.location.href = 'index.html';
 }
 
+// Logout
 document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
@@ -17,54 +19,49 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Filtros
 const filterInput = document.getElementById('filterInput');
-
 const estadoFiltro = document.getElementById('estadoFiltro');
+let allTickets = [];
 
-// Función que aplica ambos filtros: por texto y por estado
 function applyFilters() {
   const searchValue = filterInput.value.toLowerCase();
   const selectedEstado = estadoFiltro.value; // 'pendiente', 'resuelto', 'negativo' o ''
 
-  // 1) Filtro por texto
+  // Filtro por texto
   let filteredTickets = allTickets.filter(ticket => {
     return JSON.stringify(ticket).toLowerCase().includes(searchValue);
   });
 
-  // 2) Filtro por estado (solo si está seleccionado alguno)
+  // Filtro por estado
   if (selectedEstado) {
     filteredTickets = filteredTickets.filter(ticket => ticket.estado === selectedEstado);
   }
 
-  // Finalmente, renderizamos
   renderTickets(filteredTickets);
 }
 
-// Cuando se escribe en el input de texto, aplicamos filtros
 filterInput.addEventListener('keyup', applyFilters);
-
-// Cuando cambia el <select> de estado, aplicamos filtros
 estadoFiltro.addEventListener('change', applyFilters);
 
-
-
+// Contenedor donde se inyecta la tabla
 const comprasTicketList = document.getElementById('comprasTicketList');
-let allTickets = [];
 
+// Render de tickets
 function renderTickets(tickets) {
   comprasTicketList.innerHTML = `
     <table class="tickets-table">
       <thead>
         <tr>
-          <th>FECHA</th>
+          <th class="center-col">FECHA</th>
           <th>USUARIO</th>
           <th>CHASIS</th>
           <th>COD/POS</th>
-          <th>CANT</th>
+          <th class="center-col">CANT</th>
           <th>CLIENTE</th>
           <th>COMENTARIO</th>
-          <th>C</th>
-          <th>ESTADO</th>
+          <th class="center-col">C</th>
+          <th class="center-col">ESTADO</th>
         </tr>
       </thead>
       <tbody id="ticketsTbody"></tbody>
@@ -83,30 +80,32 @@ function renderTickets(tickets) {
 
     const fechaFormateada = new Date(ticket.fecha).toLocaleDateString('es-ES');
 
+    // Fila principal
     const row = document.createElement('tr');
     row.classList.add('ticket-header');
     row.innerHTML = `
-    <td>${fechaFormateada}</td>
-    <td>${ticket.usuario?.username || 'N/A'}</td>
-    <td>${ticket.chasis || 'N/A'}</td>
-    <td>${ticket.cod_pos || 'N/A'}</td>
-    <td>${ticket.cant || 'N/A'}</td>
-    <td>${ticket.cliente || 'N/A'}</td>
-    <td>${ticket.comentario || 'N/A'}</td>
-    <td class="new-indicator" id="new-${ticket._id}">
-      ${
-        (role === 'compras' && ticket.nuevosComentarios?.compras) ||
-        (role === 'vendedor' && ticket.nuevosComentarios?.vendedor)
-          ? '<span class="dot"></span>'
-          : ''
-      }
-    </td>
-    <td>
-      <span class="estado-circulo ${estadoClass}"></span>
-      ${ticket.estado}
-    </td>
-  `;
+      <td class="center-col">${fechaFormateada}</td>
+      <td>${ticket.usuario?.username || 'N/A'}</td>
+      <td>${ticket.chasis || 'N/A'}</td>
+      <td>${ticket.cod_pos || 'N/A'}</td>
+      <td class="center-col">${ticket.cant || 'N/A'}</td>
+      <td>${ticket.cliente || 'N/A'}</td>
+      <td>${ticket.comentario || 'N/A'}</td>
+      <td class="new-indicator center-col" id="new-${ticket._id}">
+        ${
+          (role === 'compras' && ticket.nuevosComentarios?.compras) ||
+          (role === 'vendedor' && ticket.nuevosComentarios?.vendedor)
+            ? '<span class="dot"></span>'
+            : ''
+        }
+      </td>
+      <td class="center-col">
+        <span class="estado-circulo ${estadoClass}"></span>
+        ${ticket.estado}
+      </td>
+    `;
 
+    // Fila detalle (por defecto oculta)
     const detailRow = document.createElement('tr');
     detailRow.classList.add('ticket-detalle');
     detailRow.style.display = 'none';
@@ -114,6 +113,7 @@ function renderTickets(tickets) {
     const detailCell = document.createElement('td');
     detailCell.colSpan = 9;
 
+    // Contenido del detalle
     detailCell.innerHTML = `
       <div class="ticket-orig-data">
         <h3>Detalles del Urgente</h3>
@@ -176,6 +176,11 @@ function renderTickets(tickets) {
       }
     `;
 
+    detailRow.appendChild(detailCell);
+    ticketsTbody.appendChild(row);
+    ticketsTbody.appendChild(detailRow);
+
+    // Listener para resolución (solo si está pendiente)
     if (ticket.estado === 'pendiente') {
       const resolverForm = detailCell.querySelector('.resolver-form');
       resolverForm.addEventListener('submit', async (e) => {
@@ -219,6 +224,7 @@ function renderTickets(tickets) {
       });
     }
 
+    // Listener para comentarios
     const commentForm = detailCell.querySelector('.comment-form');
     const commentsList = detailCell.querySelector(`#comments-${ticket._id}`);
 
@@ -248,13 +254,28 @@ function renderTickets(tickets) {
       }
     });
 
+    // Cargar comentarios previos
     fetchComments(ticket._id, commentsList);
 
+    // =========================================
+    //  ÚNICO LISTENER para abrir/cerrar detalle
+    // =========================================
     row.addEventListener('click', async () => {
-      detailRow.style.display = detailRow.style.display === 'none' ? '' : 'none';
-      if (detailRow.style.display !== 'none') {
+      console.log('Fila clickeada:', ticket._id);  // <--- Debug
+
+      // Preguntar si está cerrado
+      const isClosed = detailRow.style.display === 'none';
+      
+      // Toggle de display
+      detailRow.style.display = isClosed ? '' : 'none';
+      
+      // Agregar/quitar clase .open
+      if (isClosed) {
+        row.classList.add('open');
+        console.log('Se abre y se marca como leído:', ticket._id);
+
+        // Marcar como leído (sólo al abrir)
         try {
-          console.log(`Marcando como leído: Ticket ID ${ticket._id}`); // Para depurar
           await fetch(`/tickets/${ticket._id}/mark-read`, {
             method: 'POST',
             headers: {
@@ -265,30 +286,30 @@ function renderTickets(tickets) {
         } catch (error) {
           console.error('Error al marcar ticket como leído:', error);
         }
+
+      } else {
+        row.classList.remove('open');
+        console.log('Se cierra detalle:', ticket._id);
       }
     });
-    
-
-    detailRow.appendChild(detailCell);
-    ticketsTbody.appendChild(row);
-    ticketsTbody.appendChild(detailRow);
   });
 }
 
+// Obtener todos los tickets
 async function fetchAllTickets() {
   try {
     const res = await fetch('/tickets', {
       headers: { Authorization: `Bearer ${token}` },
     });
     allTickets = await res.json();
-    console.log(allTickets); // Revisa aquí si nuevosComentarios está presente
+    console.log('Tickets recibidos:', allTickets);
     renderTickets(allTickets);
   } catch (error) {
     console.error('Error al obtener tickets:', error);
   }
 }
 
-
+// Cargar comentarios de un ticket
 async function fetchComments(ticketId, commentsList) {
   try {
     const res = await fetch(`/tickets/${ticketId}/comments`, {
@@ -307,17 +328,18 @@ async function fetchComments(ticketId, commentsList) {
   }
 }
 
+// Agregar comentario a la lista
 function addCommentToList(commentsList, comment) {
   const commentItem = document.createElement('li');
   const dateFormatted = new Date(comment.fecha).toLocaleString('es-ES');
   const username = comment.usuario?.username || 'Usuario desconocido';
 
-  // Obtener el userId actual desde localStorage o sessionStorage
+  // userId actual
   const currentUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
 
-  // Verificar si el comentario fue creado por el usuario actual
+  // Si el comentario es del usuario actual, clase 'self'
   if (comment.usuario && comment.usuario._id === currentUserId) {
-    commentItem.classList.add('self'); // Agregar la clase `self` si es del usuario actual
+    commentItem.classList.add('self');
   }
 
   commentItem.innerHTML = `
@@ -328,9 +350,5 @@ function addCommentToList(commentsList, comment) {
   commentsList.appendChild(commentItem);
 }
 
-
-
-
-
-
+// Llamada inicial
 fetchAllTickets();
