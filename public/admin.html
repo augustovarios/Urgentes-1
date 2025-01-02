@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Tickets</title>
+  <link rel="icon" href="./assets/ISOLOGO blanco (1).png" type="image/x-icon">
+  <link rel="stylesheet" href="./css/admin.css">
+</head>
+<body>
+  <header>
+    <img class="logo-page" src="./assets/ISOLOGO blanco (1).png" alt="Logo">
+    <h1>Admin - Tickets</h1>
+    <a id="logoutBtn">
+      <img class="logoLogOut" src="./assets/cerrar-sesion.svg" alt="Cerrar sesión">
+    </a>
+  </header>
+  <main>
+    <section class="filters">
+      <label for="filterInput">Buscar:</label>
+      <input type="text" id="filterInput" placeholder="Buscar tickets...">
+  
+      <label for="estadoFiltro">Estado:</label>
+      <select id="estadoFiltro">
+        <option value="">Todos</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="resuelto">Resuelto</option>
+        <option value="negativo">Negativo</option>
+      </select>
+  
+      <label for="fechaInicio">Desde:</label>
+      <input type="date" id="fechaInicio">
+  
+      <label for="fechaFin">Hasta:</label>
+      <input type="date" id="fechaFin">
+  
+      <button id="exportarXLSX" class="btn">Exportar XLSX</button>
+    </section>
+  
+    <section class="tickets-container">
+      <div id="adminTicketList" class="tickets-list">
+        <!-- Aquí se inyectará la tabla de tickets desde JavaScript -->
+      </div>
+    </section>
+  </main>
+  
+  <script src="./js/admin.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+</body>
+</html>

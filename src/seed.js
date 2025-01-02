@@ -12,10 +12,12 @@ async function createUsers() {
 
     const hashedPassVendedor = await bcrypt.hash('password_vendedor', 10);
     const hashedPassCompras = await bcrypt.hash('password_compras', 10);
+    const hashedPassAdmin = await bcrypt.hash('admin1', 10);
 
     await User.create([
       { username: 'vendedor1', password: hashedPassVendedor, role: 'vendedor' },
-      { username: 'compras1', password: hashedPassCompras, role: 'compras' }
+      { username: 'compras1', password: hashedPassCompras, role: 'compras' },
+      { username: 'admin1', password: hashedPassAdmin, role: 'admin' }
     ]);
 
     console.log('Usuarios creados');

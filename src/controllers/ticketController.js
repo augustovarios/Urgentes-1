@@ -43,7 +43,7 @@ exports.getMyTickets = async (req, res) => {
 
 exports.getAllTickets = async (req, res) => {
   // Solo Compras
-  if (req.user.role !== 'compras') {
+  if (!['compras', 'admin'].includes(req.user.role)) {
     return res.status(403).json({ error: 'Acceso no autorizado' });
   }
 
