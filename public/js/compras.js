@@ -125,7 +125,9 @@ function renderTickets(tickets) {
           <tr><th>CLIENTE</th><td>${ticket.cliente}</td></tr>
           <tr><th>COMENTARIO</th><td>${ticket.comentario || 'N/A'}</td></tr>
         </table>
-      </div>
+        
+      </div> 
+
       <div class="comments-section">
         <h4>Comentarios</h4>
         <ul class="comments-list" id="comments-${ticket._id}"></ul>
@@ -134,6 +136,8 @@ function renderTickets(tickets) {
           <button type="submit" class="btn">Agregar Comentario</button>
         </form>
       </div>
+
+      
       ${
         ticket.estado === 'pendiente'
           ? `

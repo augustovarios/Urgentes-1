@@ -8,6 +8,7 @@ if (!token || role !== 'vendedor') {
   window.location.href = 'index.html';
 }
 
+
 // Título dinámico para el formulario de creación
 const tituloVendedor = document.getElementById('tituloVendedor');
 if (tituloVendedor && username) {
@@ -196,7 +197,6 @@ function renderTickets(tickets) {
         ${ticket.estado}
       </td>
     `;
-
     // ==============================
     //  Fila detalle
     // ==============================
@@ -215,7 +215,7 @@ function renderTickets(tickets) {
           <tr><th>RESOLUCIÓN</th><td>${ticket.resolucion || 'N/A'}</td></tr>
           <tr><th>PROVEEDOR</th><td>${ticket.proveedor || 'N/A'}</td></tr>
           <tr><th>INGRESO</th><td>${ticket.ingreso || 'N/A'}</td></tr>
-          <tr><th>COMENTARIO</th><td>${ticket.comentario || 'N/A'}</td></tr>
+          <tr><th>COMENTARIO</th><td>${ticket.comentario_resolucion || 'N/A'}</td></tr>
           <tr><th>AVISADO</th><td>${ticket.avisado ? 'Sí' : 'No'}</td></tr>
           <tr><th>PAGO</th><td>${ticket.pago ? 'Sí' : 'No'}</td></tr>
         </table>

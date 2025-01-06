@@ -104,7 +104,7 @@ main .tickets-container .tickets-table thead th {
   border: 1px solid #444;
 }
 main .tickets-container .tickets-table tbody tr:nth-child(even) {
-  background: #242424;
+  background: #2C2C2C;
 }
 main .tickets-container .tickets-table tbody tr:hover {
   background: #444;
