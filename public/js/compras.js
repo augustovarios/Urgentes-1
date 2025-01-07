@@ -261,9 +261,7 @@ function renderTickets(tickets) {
     // Cargar comentarios previos
     fetchComments(ticket._id, commentsList);
 
-    // =========================================
-    //  ÚNICO LISTENER para abrir/cerrar detalle
-    // =========================================
+    // Listener para abrir/cerrar detalle jejox
     row.addEventListener('click', async () => {
       console.log('Fila clickeada:', ticket._id);  // <--- Debug
 
@@ -306,7 +304,6 @@ async function fetchAllTickets() {
       headers: { Authorization: `Bearer ${token}` },
     });
     allTickets = await res.json();
-    console.log('Tickets recibidos:', allTickets);
     renderTickets(allTickets);
   } catch (error) {
     console.error('Error al obtener tickets:', error);

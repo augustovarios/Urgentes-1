@@ -10,9 +10,9 @@ async function createUsers() {
       useUnifiedTopology: true,
     });
 
-    const hashedPassVendedor = await bcrypt.hash('password_vendedor', 10);
-    const hashedPassCompras = await bcrypt.hash('password_compras', 10);
-    const hashedPassAdmin = await bcrypt.hash('admin1', 10);
+    const hashedPassVendedor = await bcrypt.hash('vendedor1075', 10);
+    const hashedPassCompras = await bcrypt.hash('compras1075', 10);
+    const hashedPassAdmin = await bcrypt.hash('admin1075', 10);
 
     await User.create([
       { username: 'vendedor1', password: hashedPassVendedor, role: 'vendedor' },

@@ -43,3 +43,30 @@ loginForm.addEventListener('submit', async (e) => {
     alert('Error de conexión con el servidor');
   }
 });
+
+console.log(`
+                       .-.
+                      |_:_|
+                     /(_Y_)\\
+.                   ( \\/M\\/ )
+ '.               _.'-/'-'\-'._ 
+   ':           _/.--'[[[[]'--.\\_
+     ':        /_'  : |::"| :  '.\\
+       ':     //   ./ |oUU| \\.'  :\\
+         ':  _:'..' \\_|___|_/ :   :|
+           ':.  .'  |_[___]_|  :.':\\
+            [::\\ |  :  | |  :   ; : \\
+             '-'   \\/'.| |.' \\  .;.' |
+             |\\_    \\  '-'   :       |
+             |  \\    \\ .:    :   |   |
+             |   \\    | '.   :    \\  |
+             /       \\   :. .;       |
+            /     |   |  :__/     :  \\\\
+           |  |   |    \\:   | \\   |   ||
+          /    \\  : :  |:   /  |__|   /|
+         |     : : :_/_|  /'._\\  '--|_\\
+          /___.-/_|-'   \\  \\
+                         '-'
+`);
+console.log("%copɐnƃ∀ oʇsnƃn∀ ʎq ǝpɐꟽ for Eliggi ","color: white; font-family: sans-serif; font-size: 1rem; font-weight: bolder; text-shadow: #000 1px 1px;");
+console.log(`©${new Date().getFullYear()} Augusto Aguado. Todos los derechos reservados.`);
