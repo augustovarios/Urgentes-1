@@ -1,20 +1,43 @@
+// src/server.js
 const app = require('./app');
 const connectDB = require('./config/db');
 const cron = require('node-cron');
 const { cleanupOldComments } = require('./controllers/ticketController');
+const packageJson = require('../package.json');
 
-// Programar limpieza de comentarios cada día a la medianoche
+const http = require('http');
+const { Server } = require('socket.io');
+
+//Función para obtener la versión del servidor
+app.get('/version', (req, res) => {
+  res.json({ version: packageJson.version });
+});
+
+// -- AÑADE: importamos setIO del helper
+const { setIO } = require('./helpers/socket');
+
+// Programar limpieza de comentarios
 cron.schedule('*/30 * * * * *', () => {
   console.log('Ejecutando limpieza de comentarios...');
   cleanupOldComments();
 });
 
-
 const PORT = process.env.PORT || 3000;
 
+// Creamos servidor HTTP
+const server = http.createServer(app);
+
+// Iniciamos Socket.IO
+const io = new Server(server, {
+  // Opciones si las necesitas
+});
+
+// -- AÑADE: asignamos la instancia real de io
+setIO(io);
+
+// Conectamos a la DB y levantamos el server
 connectDB(process.env.MONGODB_URI).then(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
   });
 });
-

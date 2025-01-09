@@ -63,6 +63,7 @@ main {
 
   .filters {
     display: flex;
+    flex-wrap: nowrap;
     justify-content: space-between;
     margin-bottom: 20px;
     align-items: center;
@@ -256,7 +257,7 @@ main {
     }
   }
 
-  #exportarXLSX {
+  #exportarXLSX, #borrarFiltrados{
     padding: 10px 15px;
     background: #ffd700;
     color: #000;
@@ -270,4 +271,14 @@ main {
       background: #e6c200;
     }
   }
+}
+
+footer {
+  position: fixed; 
+  bottom: 0; 
+  left: 0;
+  width: 100%; 
+  color: white; 
+  text-align: left; 
+  z-index: 1000; 
 }

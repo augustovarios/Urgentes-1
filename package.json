@@ -1,6 +1,6 @@
 {
   "name": "urgentes",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "description": "",
   "main": "src/server.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "mongoose": "^8.9.1",
+    "nanoid": "^5.0.9",
     "node-cron": "^3.0.3",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1"

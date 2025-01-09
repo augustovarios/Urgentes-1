@@ -1,11 +1,15 @@
 // src/controllers/ticketController.js
 const Ticket = require('../models/Ticket');
+const { getIO } = require('../helpers/socket');
 
 exports.createTicket = async (req, res) => {
+  console.log('req.body:', req.body);
+  console.log('req.user:', req.user);
+
   const { chasis, cod_pos, cant, comentario, cliente } = req.body;
 
   // Solo Vendedor
-  if (req.user.role !== 'vendedor') {
+  if (!req.user || req.user.role !== 'vendedor') {
     return res.status(403).json({ error: 'Solo un vendedor puede crear tickets' });
   }
 
@@ -19,6 +23,11 @@ exports.createTicket = async (req, res) => {
       usuario: req.user.id
     });
     await ticket.save();
+
+    // Obtén la instancia real de io y emite:
+    const io = getIO();
+    io.emit('nuevoTicket', ticket);
+
     res.status(201).json(ticket);
   } catch (error) {
     console.error('createTicket -> Error al crear ticket:', error);
@@ -96,6 +105,11 @@ exports.resolveTicket = async (req, res) => {
     }
 
     await ticket.save();
+
+    // Obtén la instancia de io:
+    const io = getIO();
+    io.emit('ticketActualizado', ticket);
+
     console.log('resolveTicket -> Ticket actualizado:', ticket);
     res.json(ticket);
   } catch (error) {
@@ -138,16 +152,21 @@ exports.addComment = async (req, res) => {
       .select('comentarios')
       .populate('comentarios.usuario', 'username');
 
+    const comentarioAgregado = comentarioCompleto.comentarios.slice(-1)[0];
+
+    // Obtén la instancia de io:
+    const io = getIO();
+    io.emit('nuevoComentario', {
+      ticketId: ticket._id,
+      comentario: comentarioAgregado,
+    });
+
     res.status(201).json(comentarioCompleto.comentarios.pop());
   } catch (error) {
     console.error('Error al agregar comentario:', error);
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
-
-
-
-
 
 exports.getComments = async (req, res) => {
   try {
@@ -167,27 +186,6 @@ exports.getComments = async (req, res) => {
 };
 
 
-
-// exports.cleanupOldComments = async () => {
-//   try {
-//     const thirtySecondsAgo = new Date();
-//     thirtySecondsAgo.setSeconds(thirtySecondsAgo.getSeconds() - 30);
-
-//     // Buscar todos los tickets y eliminar comentarios más antiguos que 30 segundos
-//     const tickets = await Ticket.find({});
-//     for (const ticket of tickets) {
-//       ticket.comentarios = ticket.comentarios.filter(
-//         (comentario) => new Date(comentario.fecha) > thirtySecondsAgo
-//       );
-//       await ticket.save();
-//     }
-
-//     console.log('Comentarios antiguos eliminados correctamente.');
-//   } catch (error) {
-//     console.error('Error al eliminar comentarios antiguos:', error);
-//   }
-// };
-
 exports.markCommentsAsRead = async (req, res) => {
   try {
     const ticket = await Ticket.findById(req.params.id);
@@ -202,7 +200,15 @@ exports.markCommentsAsRead = async (req, res) => {
     }
 
     await ticket.save();
-    console.log('Ticket actualizado:', ticket); // Asegúrate de que nuevosComentarios cambia aquí
+    console.log('Ticket actualizado:', ticket);
+
+    // Emitimos un evento "comentariosLeidos"
+    const io = getIO();
+    io.emit('comentariosLeidos', {
+      ticketId: ticket._id,
+      role: req.user.role
+    });
+
     res.status(200).json({ message: 'Comentarios marcados como leídos' });
   } catch (error) {
     console.error('Error al marcar comentarios como leídos:', error);
@@ -210,3 +216,18 @@ exports.markCommentsAsRead = async (req, res) => {
   }
 };
 
+exports.deleteTicket = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Ticket.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Ticket no encontrado' });
+    }
+
+    res.json({ message: 'Ticket eliminado con éxito' });
+  } catch (error) {
+    console.error('Error al eliminar ticket:', error);
+    res.status(500).json({ error: 'Error al eliminar ticket' });
+  }
+};

@@ -1,21 +1,41 @@
-/*****  Variables de sesión y validaciones de rol  *****/
 let token = localStorage.getItem('token') || sessionStorage.getItem('token');
 let role = localStorage.getItem('role') || sessionStorage.getItem('role');
 let username = localStorage.getItem('username') || sessionStorage.getItem('username');
 const usuarioActualId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
 
+// Nueva variable global para recordar el ticket abierto
+let openTicketId = null;
+
+const socket = io();
+socket.on('connect', () => {
+  console.log('Conectado al servidor Socket.IO');
+});
+socket.on('nuevoTicket', (ticket) => {
+  console.log('Se creó un ticket nuevo:', ticket);
+  fetchMyTickets();
+});
+socket.on('ticketActualizado', (ticket) => {
+  console.log('Un ticket fue actualizado:', ticket);
+  fetchMyTickets();
+});
+socket.on('nuevoComentario', ({ ticketId, comentario }) => {
+  console.log('Nuevo comentario en ticket:', ticketId, comentario);
+  fetchMyTickets();
+});
+socket.on('comentariosLeidos', ({ ticketId, role }) => {
+  console.log(`Se marcaron como leídos los comentarios del ticket ${ticketId} por el rol: ${role}`);
+  showOrHideDotFilter(allTickets);
+});
+
 if (!token || role !== 'vendedor') {
   window.location.href = 'index.html';
 }
 
-
-// Título dinámico para el formulario de creación
 const tituloVendedor = document.getElementById('tituloVendedor');
 if (tituloVendedor && username) {
   tituloVendedor.textContent = `${username} - Urgentes`;
 }
 
-// Logout
 document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
   if (logoutBtn) {
@@ -27,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/*****  Formulario para crear tickets  *****/
 const ticketForm = document.getElementById('ticketForm');
 ticketForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -56,54 +75,60 @@ ticketForm.addEventListener('submit', async (e) => {
       document.getElementById('crearTicketSection').style.display = 'none';
       fetchMyTickets();
     } else {
-      showInAppAlert('Ticket creado con éxito.');
-      (data.error || 'Error al crear el ticket');
+      showInAppAlert(data.error || 'Error al crear el ticket');
     }
   } catch (error) {
     console.error('Error al crear ticket:', error);
-    showInAppAlert('Ticket creado con éxito.');
-    ('Error al procesar la solicitud');
+    showInAppAlert('Error al crear el ticket');
   }
 });
 
-
-
-/*****  Filtros *****/
 const filterInput = document.getElementById('filterInput');
 const estadoFiltro = document.getElementById('estadoFiltro');
 const avisadoFiltro = document.getElementById('avisadoFiltro');
 const pagoFiltro = document.getElementById('pagoFiltro');
+const onlyDotsFiltro = document.getElementById('onlyDotsFiltro');
+const dotFilterSection = document.getElementById('dotFilterSection');
 
 let allTickets = [];
 
+function showOrHideDotFilter(tickets) {
+  const hasAnyDot = tickets.some(ticket => ticket.nuevosComentarios?.vendedor);
+  if (hasAnyDot) {
+    dotFilterSection.style.display = 'flex';
+  } else {
+    dotFilterSection.style.display = 'none';
+    onlyDotsFiltro.checked = false;
+  }
+}
+
 function applyFilters() {
   const searchValue = filterInput.value.toLowerCase();
-  const selectedEstado = estadoFiltro.value;   // 'pendiente', 'resuelto', 'negativo' o ''
-  const selectedAvisado = avisadoFiltro.value; // 'true', 'false' o ''
-  const selectedPago = pagoFiltro.value;       // 'true', 'false' o ''
+  const selectedEstado = estadoFiltro.value;
+  const selectedAvisado = avisadoFiltro.value;
+  const selectedPago = pagoFiltro.value;
+  const showOnlyDots = onlyDotsFiltro.checked;
 
-  // Filtrar por texto
   let filteredTickets = allTickets.filter(ticket =>
     JSON.stringify(ticket).toLowerCase().includes(searchValue)
   );
 
-  // Filtro por estado
   if (selectedEstado) {
     filteredTickets = filteredTickets.filter(ticket => ticket.estado === selectedEstado);
   }
-
-  // Filtro por avisado
   if (selectedAvisado) {
-    const boolAvisado = (selectedAvisado === 'true');
+    const boolAvisado = selectedAvisado === 'true';
     filteredTickets = filteredTickets.filter(ticket => ticket.avisado === boolAvisado);
   }
-
-  // Filtro por pago
   if (selectedPago) {
-    const boolPago = (selectedPago === 'true');
+    const boolPago = selectedPago === 'true';
     filteredTickets = filteredTickets.filter(ticket => ticket.pago === boolPago);
   }
-
+  if (showOnlyDots) {
+    filteredTickets = filteredTickets.filter(ticket =>
+      ticket.nuevosComentarios?.vendedor
+    );
+  }
   renderTickets(filteredTickets);
 }
 
@@ -111,25 +136,24 @@ filterInput.addEventListener('keyup', applyFilters);
 estadoFiltro.addEventListener('change', applyFilters);
 avisadoFiltro.addEventListener('change', applyFilters);
 pagoFiltro.addEventListener('change', applyFilters);
+onlyDotsFiltro.addEventListener('change', applyFilters);
 
-/*****  Contenedor donde se mostrará la tabla  *****/
 const ticketList = document.getElementById('ticketList');
 
-/*****  Obtener y renderizar los tickets del Vendedor  *****/
 async function fetchMyTickets() {
   try {
     const res = await fetch('/tickets/mis', {
       headers: { Authorization: `Bearer ${token}` },
     });
     allTickets = await res.json();
-    applyFilters(); // para que apliquemos los filtros a la data recién cargada
+    showOrHideDotFilter(allTickets);
+    applyFilters();
   } catch (error) {
     console.error('Error al obtener tickets:', error);
     alert('Error al cargar los tickets');
   }
 }
 
-/*****  Render en tabla con clases específicas de alineación *****/
 function renderTickets(tickets) {
   ticketList.innerHTML = `
   <div class="table-container">
@@ -156,7 +180,6 @@ function renderTickets(tickets) {
   const ticketsTbody = document.getElementById('ticketsTbody');
 
   tickets.forEach(ticket => {
-    // Determina la clase de estado
     const estadoClass =
       ticket.estado === 'resuelto'
         ? 'estado-verde'
@@ -165,17 +188,11 @@ function renderTickets(tickets) {
         : 'estado-naranja';
 
     const fechaFormateada = new Date(ticket.fecha).toLocaleDateString('es-ES');
-
-    // "Sí"/"No" con color
     const avisadoValue = ticket.avisado ? 'Sí' : 'No';
     const avisadoClass = ticket.avisado ? 'si-verde' : 'no-rojo';
-
     const pagoValue = ticket.pago ? 'Sí' : 'No';
     const pagoClass = ticket.pago ? 'si-verde' : 'no-rojo';
 
-    // ==============================
-    //  Fila principal
-    // ==============================
     const row = document.createElement('tr');
     row.classList.add('ticket-header');
     row.innerHTML = `
@@ -185,11 +202,14 @@ function renderTickets(tickets) {
       <td class="center-col">${ticket.cant || 'N/A'}</td>
       <td class="left-col">${ticket.cliente || 'N/A'}</td>
       <td class="left-col">${ticket.comentario || 'N/A'}</td>
-      <!-- Notificaciones -->
       <td class="center-col new-indicator" id="new-${ticket._id}">
-        ${ticket.nuevosComentarios?.vendedor ? '<span class="dot"></span>' : ''}
+        ${
+          ticket.nuevosComentarios?.vendedor &&
+          ticket.usuario?._id !== usuarioActualId
+            ? '<span class="dot"></span>'
+            : ''
+        }
       </td>
-      <!-- "Sí"/"No" con color -->
       <td class="center-col ${avisadoClass}">${avisadoValue}</td>
       <td class="center-col ${pagoClass}">${pagoValue}</td>
       <td class="center-col">
@@ -197,22 +217,28 @@ function renderTickets(tickets) {
         ${ticket.estado}
       </td>
     `;
-    // ==============================
-    //  Fila detalle
-    // ==============================
+
     const detailRow = document.createElement('tr');
     detailRow.classList.add('ticket-detalle');
-    detailRow.style.display = 'none';
+
+    // Mantén abierto si openTicketId coincide
+    if (ticket._id === openTicketId) {
+      detailRow.style.display = '';
+      row.classList.add('open');
+    } else {
+      detailRow.style.display = 'none';
+    }
 
     const detailCell = document.createElement('td');
     detailCell.colSpan = 10;
 
-    // Lógica para el contenido del detalle
     let detalleContent = '';
     if (ticket.estado === 'negativo' || ticket.estado === 'resuelto') {
       detalleContent = `
+        <span class="short-id">ID: ${ticket.shortId}</span>
         <table class="detalle-table">
           <tr><th>RESOLUCIÓN</th><td>${ticket.resolucion || 'N/A'}</td></tr>
+          <tr><th>COD/POS</th><td>${ticket.codigo}</td></tr>
           <tr><th>PROVEEDOR</th><td>${ticket.proveedor || 'N/A'}</td></tr>
           <tr><th>INGRESO</th><td>${ticket.ingreso || 'N/A'}</td></tr>
           <tr><th>COMENTARIO</th><td>${ticket.comentario_resolucion || 'N/A'}</td></tr>
@@ -222,6 +248,7 @@ function renderTickets(tickets) {
       `;
     } else {
       detalleContent = `
+        <span class="short-id">ID: ${ticket.shortId}</span>
         <table class="detalle-table">
           <tr><th>CHASIS</th><td>${ticket.chasis}</td></tr>
           <tr><th>COD/POS</th><td>${ticket.cod_pos}</td></tr>
@@ -234,7 +261,6 @@ function renderTickets(tickets) {
       `;
     }
 
-    // Form de edición + comentarios
     detalleContent += `
       <form class="edit-form" data-ticket-id="${ticket._id}">
         <div class="form-group">
@@ -253,7 +279,6 @@ function renderTickets(tickets) {
         </div>
         <button type="submit" class="btn">Guardar</button>
       </form>
-
       <div class="comments-section">
         <h4>Comentarios</h4>
         <ul class="comments-list" id="comments-${ticket._id}"></ul>
@@ -269,7 +294,6 @@ function renderTickets(tickets) {
     ticketsTbody.appendChild(row);
     ticketsTbody.appendChild(detailRow);
 
-    // Editar avisado/pago
     const editForm = detailCell.querySelector('.edit-form');
     editForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -278,7 +302,6 @@ function renderTickets(tickets) {
         avisado: formData.get('avisado') === 'true',
         pago: formData.get('pago') === 'true',
       };
-
       try {
         const res = await fetch(`/tickets/${ticket._id}`, {
           method: 'PATCH',
@@ -288,7 +311,6 @@ function renderTickets(tickets) {
           },
           body: JSON.stringify(payload),
         });
-
         if (res.ok) {
           fetchMyTickets();
         } else {
@@ -301,10 +323,8 @@ function renderTickets(tickets) {
       }
     });
 
-    // Manejo de comentarios
     const commentForm = detailCell.querySelector('.comment-form');
     const commentsList = detailCell.querySelector(`#comments-${ticket._id}`);
-
     commentForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(commentForm);
@@ -312,7 +332,6 @@ function renderTickets(tickets) {
         texto: formData.get('comment'),
         fecha: new Date().toISOString(),
       };
-
       try {
         const res = await fetch(`/tickets/${ticket._id}/comments`, {
           method: 'POST',
@@ -322,13 +341,10 @@ function renderTickets(tickets) {
           },
           body: JSON.stringify(payload),
         });
-
         if (res.ok) {
           const newComment = await res.json();
           addCommentToList(commentsList, newComment);
           commentForm.reset();
-          // Mostramos dot de notificación
-          document.getElementById(`new-${ticket._id}`).innerHTML = '<span class="dot"></span>';
         } else {
           const error = await res.json();
           alert(error.message || 'Error al agregar comentario');
@@ -339,42 +355,46 @@ function renderTickets(tickets) {
       }
     });
 
-    // Cargar comentarios previos
     fetchComments(ticket._id, commentsList);
 
-    // Click para abrir/cerrar detalle
     row.addEventListener('click', async () => {
       const isClosed = detailRow.style.display === 'none';
-      detailRow.style.display = isClosed ? '' : 'none';
-
       if (isClosed) {
+        openTicketId = ticket._id;
+        detailRow.style.display = '';
         row.classList.add('open');
-        // Marcar como leído
         try {
           await fetch(`/tickets/${ticket._id}/mark-read`, {
             method: 'POST',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           });
           document.getElementById(`new-${ticket._id}`).innerHTML = '';
+          const idx = allTickets.findIndex(t => t._id === ticket._id);
+          if (idx !== -1) {
+            allTickets[idx].nuevosComentarios.vendedor = false;
+          }
+          const anyLeft = allTickets.some(t => t.nuevosComentarios?.vendedor);
+          if (!anyLeft && onlyDotsFiltro.checked) {
+            onlyDotsFiltro.checked = false;
+            applyFilters();
+          }
         } catch (error) {
           console.error('Error al marcar ticket como leído:', error);
         }
       } else {
+        openTicketId = null;
+        detailRow.style.display = 'none';
         row.classList.remove('open');
       }
     });
   });
 }
 
-/*****  Cargar comentarios  *****/
 async function fetchComments(ticketId, commentsList) {
   try {
     const res = await fetch(`/tickets/${ticketId}/comments`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-
     if (res.ok) {
       const comments = await res.json();
       commentsList.innerHTML = '';
@@ -387,16 +407,13 @@ async function fetchComments(ticketId, commentsList) {
   }
 }
 
-/*****  Agregar comentario a la lista  *****/
 function addCommentToList(commentsList, comment) {
   const commentItem = document.createElement('li');
   if (comment.usuario?._id === usuarioActualId) {
     commentItem.classList.add('self');
   }
-
   const dateFormatted = new Date(comment.fecha).toLocaleString('es-ES');
   const username = comment.usuario?.username || 'Usuario desconocido';
-
   commentItem.innerHTML = `
     <span class="username">${username}</span>
     <span class="date">${dateFormatted}</span>
@@ -409,7 +426,9 @@ const toggleCrearTicket = document.getElementById('toggleCrearTicket');
 const crearTicketSection = document.getElementById('crearTicketSection');
 if (toggleCrearTicket && crearTicketSection) {
   toggleCrearTicket.addEventListener('click', () => {
-    const isHidden = crearTicketSection.style.display === 'none' || crearTicketSection.style.display === '';
+    const isHidden =
+      crearTicketSection.style.display === 'none' ||
+      crearTicketSection.style.display === '';
     crearTicketSection.style.display = isHidden ? 'block' : 'none';
   });
 }
@@ -426,7 +445,5 @@ function showInAppAlert(message) {
 alertCloseBtn.addEventListener('click', () => {
   inAppAlert.style.display = 'none';
 });
-
-
 
 fetchMyTickets();

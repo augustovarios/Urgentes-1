@@ -69,8 +69,9 @@ function renderTickets(tickets) {
             ticket.estado === 'negativo' ? 'estado-rojo' : 
             'estado-naranja';
 
+          // Agregamos data-id="${ticket._id}" en la <tr>
           return `
-            <tr>
+            <tr data-id="${ticket._id}">
               <td class="center-col">${fechaFormateada}</td>
               <td>${ticket.usuario?.username || 'N/A'}</td>
               <td>${ticket.chasis || 'N/A'}</td>
@@ -89,6 +90,7 @@ function renderTickets(tickets) {
     </table>
   `;
 }
+
 
 // Obtener todos los tickets
 async function fetchAllTickets() {
@@ -243,7 +245,63 @@ exportarXLSX.addEventListener('click', async () => {
   link.click();
 });
 
+// Botón
+const borrarFiltrados = document.getElementById('borrarFiltrados');
+borrarFiltrados.addEventListener('click', borrarTicketsFiltrados);
 
+async function borrarTicketsFiltrados() {
+  // Obtenemos todas las filas de la tabla que son visibles (ya filtradas)
+  const rows = document.querySelectorAll('.tickets-table tbody tr');
+
+  if (!rows.length) {
+    alert('No hay tickets filtrados para borrar.');
+    return;
+  }
+
+  // Confirmar antes de borrar
+  const sure = confirm(`¿Estás seguro de borrar ${rows.length} tickets filtrados?`);
+  if (!sure) return;
+
+  // Borrado en serie (uno tras otro):
+  for (let row of rows) {
+    const ticketId = row.getAttribute('data-id');
+
+    try {
+      // Llamada DELETE a tu endpoint /tickets/:id
+      const res = await fetch(`/tickets/${ticketId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) {
+        console.error(`No se pudo borrar ticket con ID ${ticketId}`, res.status, res.statusText);
+      }
+    } catch (error) {
+      console.error('Error al borrar ticket', error);
+    }
+  }
+
+  // Finalmente refrescamos la lista
+  await fetchAllTickets();
+  alert('Borrado completo.');
+}
+
+// Mostrar versión
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/version');
+    if (res.ok) {
+      const { version } = await res.json();
+      document.getElementById('version').textContent = version;
+    } else {
+      console.error('No se pudo obtener la versión');
+    }
+  } catch (error) {
+    console.error('Error al obtener la versión:', error);
+  }
+});
 
 
 

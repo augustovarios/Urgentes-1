@@ -58,7 +58,12 @@
   <section class="mis-tickets">
     <h2>Mis Tickets</h2>
     <div class="filtro-estado-container">
-      <input class="search-bar" type="text" id="filterInput" placeholder="Buscar">
+      <div class="search-container">
+        <label for="search-bar">Buscar cualquier valor:</label>
+        <input class="search-bar" type="text" id="filterInput" placeholder="Buscar">
+      </div>
+      
+      <div>
       <label for="estadoFiltro">Filtrar por estado:</label>
       <select id="estadoFiltro">
         <option value="">(Ver todos)</option>
@@ -66,21 +71,30 @@
         <option value="resuelto">Resuelto</option>
         <option value="negativo">Negativo</option>
       </select>
-      <label for="estadoFiltro">Filtrar por Avisado/Pago:</label>
-      <select id="avisadoFiltro" class="filter-select">
+    </div>
+      <div>
+        <label for="estadoFiltro">Filtrar por Avisado/Pago:</label>
+        <div class="filteravisado-container">
+        <select id="avisadoFiltro" class="filter-select">
         <option value="">-- Filtrar por Avisado --</option>
         <option value="true">Sí</option>
         <option value="false">No</option>
-      </select>
-      <select id="pagoFiltro" class="filter-select">
+       </select>
+       <select id="pagoFiltro" class="filter-select">
         <option value="">-- Filtrar por Pago --</option>
         <option value="true">Sí</option>
         <option value="false">No</option>
       </select>
+      </div>
+      </div>
+      <div id="dotFilterSection" style="display: none;">
+      <input type="checkbox" id="onlyDotsFiltro">
+      <label>Mostrar comentarios sin leer</label>
+  </div>
     </div>
     <div id="ticketList"></div>
   </section>
-
+  <script src="/socket.io/socket.io.js"></script>
   <script src="js/vendedor.js"></script>
 </body>
 </html>

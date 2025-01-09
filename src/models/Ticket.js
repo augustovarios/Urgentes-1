@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
 
+const generateShortId = () => {
+  const timestamp = Date.now().toString(36); // Base 36 de la marca de tiempo
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase(); // 4 caracteres aleatorios
+  return `${timestamp}-${random}`; // Combinar para generar un ID único corto
+  
+};
+
 const TicketSchema = new mongoose.Schema({
   fecha: { type: Date, default: Date.now },
   chasis: { type: String, required: true },
@@ -17,6 +24,7 @@ const TicketSchema = new mongoose.Schema({
   comentario_resolucion: { type: String },
   avisado: { type: Boolean, default: false },
   pago: { type: Boolean, default: false },
+  shortId: { type: String, default: () => generateShortId(), unique: true }, // Campo único e inmutable
   comentarios: [
     {
       texto: { type: String, required: true },

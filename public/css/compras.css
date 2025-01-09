@@ -153,6 +153,7 @@ header h1 {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  background-color: #333333;
 }
 
 .tickets-table th {
@@ -198,11 +199,12 @@ header h1 {
   margin-top: 20px;
   display: grid;
   gap: 15px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: auto auto;
   background: #333;
   padding: 20px;
   border-radius: 5px;
   align-items: flex-end;
+  margin-bottom: 1rem;
 }
 
 .resolver-form .form-group {
@@ -267,19 +269,20 @@ header h1 {
 /* Comments Section */
 .comments-section {
   margin-top: 20px;
+  margin-bottom: 1rem;
 }
 
 .comments-section h4 {
   font-size: 18px;
   margin-bottom: 10px;
-  color: #ffd700;
+  color: #ffffff;
   font-weight: bold;
 }
 
 .comments-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 1rem 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -321,6 +324,7 @@ header h1 {
   margin-top: 15px;
   display: flex;
   gap: 10px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .comment-form textarea {
@@ -365,6 +369,140 @@ header h1 {
 .ticket-detalle {
   background: #111111;
   box-shadow: 0 0 20px 2px rgba(0, 0, 0, 0.5);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.ticket-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #000000, #333, #000000);
+  border-radius: 1rem;
+  padding: 20px;
+  z-index: 9999;
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 65rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Ancho del scrollbar */
+.ticket-modal::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Fondo de la pista (track) */
+.ticket-modal::-webkit-scrollbar-track {
+  background: #333; /* color de la pista */
+}
+
+/* Estilo de la barra que se arrastra (thumb) */
+.ticket-modal::-webkit-scrollbar-thumb {
+  background-color: #4b4b4b; /* color de la barra */
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.circulo-detalle {
+  display: inline-block;
+  margin-left: 0.2rem;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.resuelto {
+  background-color: #2ecc71; /* verde */
+}
+
+.negativo {
+  background-color: #e74c3c; /* rojo */
+}
+
+.short-id {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5rem;
+  color: #757575;
+}
+
+#ticketsTbody tr:nth-child(odd) {
+  background: #222222; /* Color para filas impares */
+}
+
+#ticketsTbody tr:nth-child(even) {
+  background: #2C2C2C; /* Color para filas pares */
+}
+
+#ticketsTbody tr:hover {
+  background: #3f3f3f; /* Color al pasar el mouse */
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+#dotFilterSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+#onlyDotsFiltro {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+#onlyDotsFiltro:checked {
+  background-color: #FFD700;
+  border-color: #ccc;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M9 16.2l-4.2-4.2-1.4 1.4 5.6 5.6 12-12-1.4-1.4z"/></svg>');
+  background-size: 14px 14px;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Responsive Design */

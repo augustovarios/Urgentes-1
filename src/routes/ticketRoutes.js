@@ -8,6 +8,7 @@ const {
   addComment,
   getComments,
   markCommentsAsRead,
+  deleteTicket,
 } = require('../controllers/ticketController');
 const { auth } = require('../middleware/authMiddleware');
 
@@ -18,5 +19,7 @@ router.patch('/:id', auth, resolveTicket);
 router.post('/:id/comments', auth, addComment);
 router.get('/:id/comments', auth, getComments);
 router.post('/:id/mark-read', auth, markCommentsAsRead);
+router.delete('/:id', auth, deleteTicket);
+
 
 module.exports = router;

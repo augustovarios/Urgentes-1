@@ -24,9 +24,14 @@
         <option value="resuelto">Resuelto</option>
         <option value="negativo">Negativo</option>
       </select>
+      <div id="dotFilterSection" style="display: none;">
+          <input type="checkbox" id="onlyDotsFiltro">
+          <label>Mostrar comentarios sin leer</label>
+      </div>
     </div>
     <div id="comprasTicketList"></div>
   </section>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="js/compras.js"></script>
 </body>
 </html>

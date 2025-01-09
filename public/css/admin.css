@@ -60,6 +60,7 @@ main {
 }
 main .filters {
   display: flex;
+  flex-wrap: nowrap;
   justify-content: space-between;
   margin-bottom: 20px;
   align-items: center;
@@ -220,7 +221,7 @@ main .tickets-container .tickets-table tbody tr td.center-col {
 .filters input:focus, .filters select:focus {
   outline: 2px solid #ffd700;
 }
-.filters #exportarXLSX {
+.filters #exportarXLSX, .filters #borrarFiltrados {
   padding: 10px 15px;
   background: #ffd700;
   color: #000;
@@ -231,6 +232,16 @@ main .tickets-container .tickets-table tbody tr td.center-col {
   text-transform: uppercase;
   transition: background 0.3s;
 }
-.filters #exportarXLSX:hover {
+.filters #exportarXLSX:hover, .filters #borrarFiltrados:hover {
   background: #e6c200;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: white;
+  text-align: left;
+  z-index: 1000;
 }/*# sourceMappingURL=admin.css.map */
