@@ -16,11 +16,7 @@ app.get('/version', (req, res) => {
 // -- AÑADE: importamos setIO del helper
 const { setIO } = require('./helpers/socket');
 
-// Programar limpieza de comentarios
-cron.schedule('*/30 * * * * *', () => {
-  console.log('Ejecutando limpieza de comentarios...');
-  cleanupOldComments();
-});
+
 
 const PORT = process.env.PORT || 3000;
 
