@@ -29,10 +29,26 @@
           <label>Mostrar comentarios sin leer</label>
       </div>
     </div>
-    <div id="comprasTicketList"></div>
+    <div id="comprasTicketList">
+      <table class="tickets-table">
+        <thead>
+          <tr>
+            <th class="center-col">FECHA</th>
+            <th>USUARIO</th>
+            <th>CHASIS</th>
+            <th>COD/POS</th>
+            <th class="center-col">CANT</th>
+            <th>CLIENTE</th>
+            <th>COMENTARIO</th>
+            <th class="center-col">C</th>
+            <th class="center-col">ESTADO</th>
+          </tr>
+        </thead>
+        <tbody id="ticketsTbody"></tbody>
+      </table>
+    </div>
   </section>
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/compras.js"></script>
 </body>
 </html>
-

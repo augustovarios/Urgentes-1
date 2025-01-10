@@ -380,7 +380,7 @@ header h1 {
   -webkit-backdrop-filter: blur(5px);
           backdrop-filter: blur(5px);
   background-color: rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  z-index: 999;
 }
 
 .ticket-modal {
@@ -503,6 +503,26 @@ header h1 {
   background-size: 14px 14px;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.overlay.hidden {
+  display: none !important;
+}
+
+.ticket-modal.hidden {
+  display: none !important;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 999;
 }
 
 /* Responsive Design */
