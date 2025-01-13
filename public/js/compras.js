@@ -5,14 +5,8 @@ if (!token || role !== 'compras') {
   window.location.href = 'index.html';
 }
 
-let overlay = null;
-let modalContainer = null;
-
-// Bandera global para saber si hay un modal abierto
 let isEditing = false;
-// Cacheamos si llegó un evento de socket mientras editábamos
 let pendingRefresh = false;
-
 let openTicketId = null;
 
 const socket = io();
@@ -161,11 +155,6 @@ function renderTickets(tickets) {
     `;
 
     row.addEventListener('click', async () => {
-      if (overlay || modalContainer) {
-        // Si ya hay un modal abierto, lo cerramos primero
-        closeTicketModal();
-      }
-      // Si clickeamos el mismo ticket, cierra, si fuera el caso:
       if (openTicketId === ticket._id) {
         closeTicketModal();
         return;
@@ -194,7 +183,7 @@ function renderTickets(tickets) {
         console.error('Error al marcar ticket como leído:', error);
       }
 
-      createTicketModal(ticket);
+      updateTicketModal(ticket);
     });
 
     ticketsTbody.appendChild(row);
@@ -203,113 +192,100 @@ function renderTickets(tickets) {
   if (openTicketId) {
     const ticket = tickets.find(t => t._id === openTicketId);
     if (ticket) {
-      createTicketModal(ticket);
+      updateTicketModal(ticket);
     } else {
       openTicketId = null;
     }
   }
 }
 
-function createTicketModal(ticket) {
+function updateTicketModal(ticket) {
   // Marcamos que tenemos un modal abierto
   isEditing = true;
 
-  overlay = document.createElement('div');
-  overlay.classList.add('overlay');
-  document.body.appendChild(overlay);
+  const modal = document.getElementById('ticketModal');
+  const overlay = document.getElementById('overlay');
+  overlay.style.display = 'block';
+  modal.style.display = 'block';
 
-  modalContainer = document.createElement('div');
-  modalContainer.classList.add('ticket-modal');
-  document.body.appendChild(modalContainer);
-
-  modalContainer.innerHTML = `
-    <h3>Detalles del Urgente</h3>
-    <span class="short-id">ID: ${ticket.shortId}</span>
-    <table class="ticket-table">
-      <tr><th>Vendedor</th><td>${ticket.usuario?.username || 'Desconocido'}</td></tr>
-      <tr><th>CHASIS</th><td>${ticket.chasis}</td></tr>
-      <tr><th>COD/POS</th><td>${ticket.cod_pos}</td></tr>
-      <tr><th>CANT</th><td>${ticket.cant}</td></tr>
-      <tr><th>CLIENTE</th><td>${ticket.cliente}</td></tr>
-      <tr><th>COMENTARIO</th><td>${ticket.comentario || 'N/A'}</td></tr>
-    </table>
-    ${
-      ticket.estado === 'resuelto' || ticket.estado === 'negativo'
-        ? `
-          <h3>Resolución: 
-            <span title="${ticket.estado}" class="circulo-detalle ${ticket.estado}"></span>
-          </h3>
-          <table class="ticket-table">
-            <tr><th>RESOLUCIÓN</th><td>${ticket.resolucion || 'N/A'}</td></tr>
-            <tr><th>COD/POS</th><td>${ticket.codigo}</td></tr>
-            <tr><th>PROVEEDOR</th><td>${ticket.proveedor || 'N/A'}</td></tr>
-            <tr><th>INGRESO</th><td>${ticket.ingreso || 'N/A'}</td></tr>
-            <tr><th>COMENTARIO</th><td>${ticket.comentario_resolucion || 'N/A'}</td></tr>
-          </table>
-        `
-        : ''
+  // Configurar evento de clic para cerrar el modal al hacer clic fuera de este
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      closeTicketModal();
     }
-    <div class="comments-section">
-      <h4>Comentarios</h4>
-      <ul class="comments-list" id="comments-${ticket._id}"></ul>
-      <form class="comment-form" data-ticket-id="${ticket._id}">
-        <textarea name="comment" placeholder="Agregar un comentario..." required></textarea>
-        <button type="submit" class="btn">Agregar Comentario</button>
+  });
+
+  document.getElementById('modalShortId').textContent = `ID: ${ticket.shortId}`;
+  document.getElementById('modalVendedor').textContent = ticket.usuario?.username || 'Desconocido';
+  document.getElementById('modalChasis').textContent = ticket.chasis;
+  document.getElementById('modalCodPos').textContent = ticket.cod_pos;
+  document.getElementById('modalCant').textContent = ticket.cant;
+  document.getElementById('modalCliente').textContent = ticket.cliente;
+  document.getElementById('modalComentario').textContent = ticket.comentario || 'N/A';
+
+  const modalResolucionSection = document.getElementById('modalResolucionSection');
+  modalResolucionSection.innerHTML = '';
+  if (ticket.estado === 'resuelto' || ticket.estado === 'negativo') {
+    modalResolucionSection.innerHTML = `
+      <h3>Resolución: 
+        <span title="${ticket.estado}" class="circulo-detalle ${ticket.estado}"></span>
+      </h3>
+      <table class="ticket-table">
+        <tr><th>RESOLUCIÓN</th><td>${ticket.resolucion || 'N/A'}</td></tr>
+        <tr><th>COD/POS</th><td>${ticket.codigo}</td></tr>
+        <tr><th>PROVEEDOR</th><td>${ticket.proveedor || 'N/A'}</td></tr>
+        <tr><th>INGRESO</th><td>${ticket.ingreso || 'N/A'}</td></tr>
+        <tr><th>COMENTARIO</th><td>${ticket.comentario_resolucion || 'N/A'}</td></tr>
+      </table>
+    `;
+  }
+
+  const modalResolverFormSection = document.getElementById('modalResolverFormSection');
+  modalResolverFormSection.innerHTML = '';
+  if (ticket.estado === 'pendiente') {
+    modalResolverFormSection.innerHTML = `
+      <form class="resolver-form" data-ticket-id="${ticket._id}">
+        <div class="form-group">
+          <label>Resolución</label>
+          <input type="text" name="resolucion" required>
+        </div>
+        <div class="form-group">
+          <label>Código</label>
+          <input type="text" name="codigo">
+        </div>
+        <div class="form-group">
+          <label>Cantidad Resuelta</label>
+          <input type="number" name="cantidad_resuelta">
+        </div>
+        <div class="form-group">
+          <label>Proveedor</label>
+          <input type="text" name="proveedor">
+        </div>
+        <div class="form-group">
+          <label>Ingreso</label>
+          <input type="text" name="ingreso">
+        </div>
+        <div class="form-group">
+          <label>Comentario de Resolución</label>
+          <input type="text" name="comentario_resolucion">
+        </div>
+        <div class="form-group">
+          <label>Estado</label>
+          <select name="estado">
+            <option value="resuelto">Resuelto</option>
+            <option value="negativo">Negativo</option>
+          </select>
+        </div>
+        <button type="submit" class="btn">Guardar Resolución</button>
       </form>
-    </div>
-    ${
-      ticket.estado === 'pendiente'
-        ? `
-        <form class="resolver-form" data-ticket-id="${ticket._id}">
-          <div class="form-group">
-            <label>Resolución</label>
-            <input type="text" name="resolucion" required>
-          </div>
-          <div class="form-group">
-            <label>Código</label>
-            <input type="text" name="codigo">
-          </div>
-          <div class="form-group">
-            <label>Cantidad Resuelta</label>
-            <input type="number" name="cantidad_resuelta">
-          </div>
-          <div class="form-group">
-            <label>Proveedor</label>
-            <input type="text" name="proveedor">
-          </div>
-          <div class="form-group">
-            <label>Ingreso</label>
-            <input type="text" name="ingreso">
-          </div>
-          <div class="form-group">
-            <label>Comentario de Resolución</label>
-            <input type="text" name="comentario_resolucion">
-          </div>
-          <div class="form-group">
-            <label>Estado</label>
-            <select name="estado">
-              <option value="resuelto">Resuelto</option>
-              <option value="negativo">Negativo</option>
-            </select>
-          </div>
-          <button type="submit" class="btn">Guardar Resolución</button>
-        </form>
-        `
-        : ''
-    }
-  `;
+    `;
 
-  const resolverForm = modalContainer.querySelector('.resolver-form');
-  if (resolverForm) {
-    // Al hacer clic en el form, ya consideramos que está editando
-    resolverForm.addEventListener('click', () => {
-      isEditing = true;
-    });
+    const resolverForm = modalResolverFormSection.querySelector('.resolver-form');
     resolverForm.addEventListener('submit', (e) => handleResolverSubmit(e, ticket._id));
   }
 
-  const commentForm = modalContainer.querySelector('.comment-form');
-  const commentsList = modalContainer.querySelector(`#comments-${ticket._id}`);
+  const commentForm = document.getElementById('commentForm');
+  const commentsList = document.getElementById('commentsList');
   commentForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(commentForm);
@@ -339,26 +315,17 @@ function createTicketModal(ticket) {
   });
 
   fetchComments(ticket._id, commentsList);
-
-  overlay.addEventListener('click', (e) => {
-    if (!modalContainer.contains(e.target)) {
-      closeTicketModal();
-    }
-  });
 }
 
 function closeTicketModal() {
   openTicketId = null;
-  overlay?.remove();
-  modalContainer?.remove();
+  const modal = document.getElementById('ticketModal');
+  const overlay = document.getElementById('overlay');
+  modal.style.display = 'none';
+  overlay.style.display = 'none';
 
-  overlay = null;
-  modalContainer = null;
-
-  // Se cierra el modal: ya no estamos editando
   isEditing = false;
 
-  // Si teníamos pendiente un refresco, lo hacemos ahora
   if (pendingRefresh) {
     pendingRefresh = false;
     fetchAllTickets();
@@ -392,7 +359,6 @@ async function handleResolverSubmit(e, ticketId) {
     });
     if (res.ok) {
       alert('Ticket actualizado con éxito.');
-      // Dejamos de editar al guardar con éxito
       isEditing = false;
       closeTicketModal();
       fetchAllTickets();

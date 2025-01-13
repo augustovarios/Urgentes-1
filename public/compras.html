@@ -25,8 +25,8 @@
         <option value="negativo">Negativo</option>
       </select>
       <div id="dotFilterSection" style="display: none;">
-          <input type="checkbox" id="onlyDotsFiltro">
-          <label>Mostrar comentarios sin leer</label>
+        <input type="checkbox" id="onlyDotsFiltro">
+        <label>Mostrar comentarios sin leer</label>
       </div>
     </div>
     <div id="comprasTicketList">
@@ -46,8 +46,38 @@
         </thead>
         <tbody id="ticketsTbody"></tbody>
       </table>
-    </div>
+    </div>  
   </section>
+
+  <!-- Overlay separado del modal -->
+  <div class="overlay" id="overlay" style="display: none;"></div>
+
+  <!-- Modal -->
+  <div id="ticketModal" class="ticket-modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Detalles del Urgente</h3>
+      <span class="short-id" id="modalShortId"></span>
+      <table class="ticket-table">
+        <tr><th>Vendedor</th><td id="modalVendedor"></td></tr>
+        <tr><th>CHASIS</th><td id="modalChasis"></td></tr>
+        <tr><th>COD/POS</th><td id="modalCodPos"></td></tr>
+        <tr><th>CANT</th><td id="modalCant"></td></tr>
+        <tr><th>CLIENTE</th><td id="modalCliente"></td></tr>
+        <tr><th>COMENTARIO</th><td id="modalComentario"></td></tr>
+      </table>
+      <div id="modalResolucionSection"></div>
+      <div class="comments-section">
+        <h4>Comentarios</h4>
+        <ul class="comments-list" id="commentsList"></ul>
+        <form class="comment-form" id="commentForm">
+          <textarea name="comment" placeholder="Agregar un comentario..." required></textarea>
+          <button type="submit" class="btn">Agregar Comentario</button>
+        </form>
+      </div>
+      <div id="modalResolverFormSection"></div>
+    </div>
+  </div>
+  
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/compras.js"></script>
 </body>
