@@ -15,17 +15,14 @@ socket.on('connect', () => {
 });
 
 socket.on('nuevoTicket', (ticket) => {
-  console.log('Se creó un ticket nuevo:', ticket);
   if (!isEditing) {
     fetchAllTickets();
   } else {
-    console.log('[Compras] - Modal abierto, posponiendo refresco...');
     pendingRefresh = true;
   }
 });
 
 socket.on('ticketActualizado', (ticket) => {
-  console.log('Ticket actualizado:', ticket);
   if (!isEditing) {
     fetchAllTickets();
   } else {
@@ -35,7 +32,6 @@ socket.on('ticketActualizado', (ticket) => {
 });
 
 socket.on('nuevoComentario', ({ ticketId, comentario }) => {
-  console.log('Nuevo comentario en ticket:', ticketId, comentario);
   if (!isEditing) {
     fetchAllTickets();
   } else {

@@ -11,19 +11,15 @@ socket.on('connect', () => {
   console.log('Conectado al servidor Socket.IO');
 });
 socket.on('nuevoTicket', (ticket) => {
-  console.log('Se creó un ticket nuevo:', ticket);
   fetchMyTickets();
 });
 socket.on('ticketActualizado', (ticket) => {
-  console.log('Un ticket fue actualizado:', ticket);
   fetchMyTickets();
 });
 socket.on('nuevoComentario', ({ ticketId, comentario }) => {
-  console.log('Nuevo comentario en ticket:', ticketId, comentario);
   fetchMyTickets();
 });
 socket.on('comentariosLeidos', ({ ticketId, role }) => {
-  console.log(`Se marcaron como leídos los comentarios del ticket ${ticketId} por el rol: ${role}`);
   showOrHideDotFilter(allTickets);
 });
 

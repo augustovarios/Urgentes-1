@@ -31,10 +31,8 @@ const io = new Server(server, {
   // Opciones si las necesitas
 });
 
-// -- AÑADE: asignamos la instancia real de io
 setIO(io);
 
-// Conectamos a la DB y levantamos el server
 connectDB(process.env.MONGODB_URI).then(() => {
   server.listen(PORT, () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
