@@ -33,7 +33,9 @@ setIO(io);
 
 // Conectamos a la DB y levantamos el server
 connectDB(process.env.MONGODB_URI).then(() => {
-  server.listen(PORT, () => {
+  server.listen(PORT, "0.0.0.0", () => {
     console.log(`Servidor corriendo en puerto ${PORT}`);
   });
+}).catch((error) => {
+  console.error("Error al iniciar el servidor:", error);
 });
