@@ -1,9 +1,11 @@
 // src/server.js
+const express = require('express'); // Importa express
 const app = require('./app');
 const connectDB = require('./config/db');
 const cron = require('node-cron');
 const { cleanupOldComments } = require('./controllers/ticketController');
 const packageJson = require('../package.json');
+const path = require('path'); // Importa path para manejar rutas
 
 const http = require('http');
 const { Server } = require('socket.io');
@@ -16,9 +18,10 @@ app.get('/version', (req, res) => {
 // -- AÑADE: importamos setIO del helper
 const { setIO } = require('./helpers/socket');
 
-
-
 const PORT = process.env.PORT || 3000;
+
+// Middleware para servir archivos estáticos
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Creamos servidor HTTP
 const server = http.createServer(app);
