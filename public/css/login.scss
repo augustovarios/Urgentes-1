@@ -1,0 +1,137 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #111; /* fondo global oscuro */
+  color: #eee; /* texto claro sobre fondo oscuro */
+}
+
+.logo {
+  width: 15rem;
+  height: 10rem;
+  &-page {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0.5rem;
+    width: 4.5rem;
+    &:hover {
+      filter: drop-shadow(0px 4px 6px rgb(246, 250, 1));
+    }
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #fff;
+  }
+
+  input, select {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #333;
+    color: #fff;
+    &:focus {
+      outline: 2px solid #ffd700;
+    }
+  }
+}
+
+.btn,
+.btn-login {
+  padding: 10px 15px;
+  background: #ffd700;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: background 0.3s;
+}
+.btn:hover,
+.btn-login:hover {
+  background: #e6c200;
+}
+
+/* Login */
+.login-body {
+  margin: 0;
+  padding: 0;
+  background: #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.login-container {
+  background: #222;
+  padding: 40px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  text-align: center;
+  margin-left: 3rem;
+
+  h1 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 1.8em;
+    color: #ffd700;
+  }
+}
+.check-group {
+  margin-bottom: 20px;
+  text-align: left;
+  .check-label {
+    color: #fff;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  input[type="checkbox"] {
+    margin-right: 5px;
+    transform: scale(1.2);
+    cursor: pointer;
+  }
+}
+.btn-login {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+
+  .login-body{
+    display: flex;
+    flex-direction: column;
+  }
+  .login-container {
+    margin: 0;
+  }
+
+  header {
+    background: #000; 
+    margin-bottom: 5px;
+    padding: 3rem;
+    border-bottom: none; 
+    h1{
+      display: none;
+    }
+  }
+  .logo {
+    &-page {
+      &:hover {
+        filter: none;
+      }
+    }
+  }
+
+}
