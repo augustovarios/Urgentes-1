@@ -14,28 +14,18 @@ socket.on('connect', () => {
   console.log('Conectado a Socket.IO como compras');
 });
 
-socket.on('nuevoTicket', (ticket) => {
-  if (!isEditing) {
-    fetchAllTickets();
-  } else {
-    pendingRefresh = true;
-  }
+socket.on('nuevoTicket', () => {
+  handleSocketEvent();
 });
 
-socket.on('ticketActualizado', (ticket) => {
-  if (!isEditing) {
-    fetchAllTickets();
-  } else {
-    console.log('[Compras] - Modal abierto, posponiendo refresco...');
-    pendingRefresh = true;
-  }
+socket.on('ticketActualizado', () => {
+  console.log('[Compras] - Modal abierto, posponiendo refresco...');
+  handleSocketEvent();
 });
 
 socket.on('nuevoComentario', ({ ticketId, comentario }) => {
   if (openTicketId === ticketId) {
     const commentsList = document.getElementById('commentsList');
-
-    // Verifica si el comentario ya existe en la lista
     const existingComment = Array.from(commentsList.children).some(
       (commentItem) => commentItem.dataset.commentId === comentario._id
     );
@@ -47,20 +37,16 @@ socket.on('nuevoComentario', ({ ticketId, comentario }) => {
     console.log(`[Socket.IO] - Comentario recibido para otro ticket (ID: ${ticketId})`);
   }
   console.log('Evento nuevoComentario recibido:', ticketId, comentario);
+  handleSocketEvent();
+});
 
+function handleSocketEvent() {
   if (!isEditing) {
     fetchAllTickets();
   } else {
-    console.log('[Compras] - Modal abierto, posponiendo refresco...');
     pendingRefresh = true;
   }
-});
-
-
-
-
-
-
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const logoutBtn = document.getElementById('logoutBtn');
@@ -85,10 +71,8 @@ onlyDotsFiltro.addEventListener('change', applyFilters);
 
 function showOrHideDotFilter(tickets) {
   const hasAnyDot = tickets.some(ticket => ticket.nuevosComentarios?.compras);
-  if (hasAnyDot) {
-    dotFilterSection.style.display = 'flex';
-  } else {
-    dotFilterSection.style.display = 'none';
+  dotFilterSection.style.display = hasAnyDot ? 'flex' : 'none';
+  if (!hasAnyDot) {
     onlyDotsFiltro.checked = false;
   }
 }
@@ -138,8 +122,9 @@ function renderTickets(tickets) {
   `;
 
   const ticketsTbody = document.getElementById('ticketsTbody');
+  const fragment = document.createDocumentFragment();
 
-  tickets.forEach((ticket) => {
+  tickets.forEach(ticket => {
     const estadoClass =
       ticket.estado === 'resuelto'
         ? 'estado-verde'
@@ -172,40 +157,12 @@ function renderTickets(tickets) {
       </td>
     `;
 
-    row.addEventListener('click', async () => {
-      if (openTicketId === ticket._id) {
-        closeTicketModal();
-        return;
-      }
+    row.addEventListener('click', () => handleTicketClick(ticket));
 
-      openTicketId = ticket._id;
-
-      try {
-        await fetch(`/tickets/${ticket._id}/mark-read`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        document.getElementById(`new-${ticket._id}`).innerHTML = '';
-
-        const idx = allTickets.findIndex(t => t._id === ticket._id);
-        if (idx !== -1) {
-          allTickets[idx].nuevosComentarios.compras = false;
-        }
-
-        const anyLeft = allTickets.some(t => t.nuevosComentarios?.compras);
-        if (!anyLeft && onlyDotsFiltro.checked) {
-          onlyDotsFiltro.checked = false;
-          applyFilters();
-        }
-      } catch (error) {
-        console.error('Error al marcar ticket como leído:', error);
-      }
-
-      updateTicketModal(ticket);
-    });
-
-    ticketsTbody.appendChild(row);
+    fragment.appendChild(row);
   });
+
+  ticketsTbody.appendChild(fragment);
 
   if (openTicketId) {
     const ticket = tickets.find(t => t._id === openTicketId);
@@ -217,8 +174,38 @@ function renderTickets(tickets) {
   }
 }
 
+function handleTicketClick(ticket) {
+  if (openTicketId === ticket._id) {
+    closeTicketModal();
+    return;
+  }
+
+  openTicketId = ticket._id;
+
+  fetch(`/tickets/${ticket._id}/mark-read`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  .then(() => {
+    document.getElementById(`new-${ticket._id}`).innerHTML = '';
+
+    const idx = allTickets.findIndex(t => t._id === ticket._id);
+    if (idx !== -1) {
+      allTickets[idx].nuevosComentarios.compras = false;
+    }
+
+    const anyLeft = allTickets.some(t => t.nuevosComentarios?.compras);
+    if (!anyLeft && onlyDotsFiltro.checked) {
+      onlyDotsFiltro.checked = false;
+      applyFilters();
+    }
+  })
+  .catch(error => console.error('Error al marcar ticket como leído:', error));
+
+  updateTicketModal(ticket);
+}
+
 function updateTicketModal(ticket) {
-  // Marcamos que tenemos un modal abierto y limpiamos cualquier estado previo
   isEditing = true;
   openTicketId = null;
 
@@ -227,22 +214,14 @@ function updateTicketModal(ticket) {
   overlay.style.display = 'block';
   modal.style.display = 'block';
 
-  // Limpia el contenido previo del modal
-  const commentsList = document.getElementById('commentsList');
-  commentsList.innerHTML = ''; // Limpia comentarios previos
-  document.getElementById('commentForm').reset(); // Resetea el formulario de comentarios
-
-  // Configurar evento de clic para cerrar el modal al hacer clic fuera de este
-  overlay.addEventListener('click', (e) => {
+  overlay.addEventListener('click', e => {
     if (e.target === overlay) {
       closeTicketModal();
     }
   });
 
-  // Asigna el ticket actual
   openTicketId = ticket._id;
 
-  // Actualiza los detalles del modal con la información del ticket
   document.getElementById('modalShortId').textContent = `ID: ${ticket.shortId}`;
   document.getElementById('modalVendedor').textContent = ticket.usuario?.username || 'Desconocido';
   document.getElementById('modalChasis').textContent = ticket.chasis || 'N/A';
@@ -251,7 +230,6 @@ function updateTicketModal(ticket) {
   document.getElementById('modalCliente').textContent = ticket.cliente || 'N/A';
   document.getElementById('modalComentario').textContent = ticket.comentario || 'N/A';
 
-  // Gestionar la sección de resolución según el estado del ticket
   const modalResolucionSection = document.getElementById('modalResolucionSection');
   modalResolucionSection.innerHTML = '';
   if (ticket.estado === 'resuelto' || ticket.estado === 'negativo') {
@@ -269,7 +247,6 @@ function updateTicketModal(ticket) {
     `;
   }
 
-  // Configurar el formulario para resolver tickets si el estado es pendiente
   const modalResolverFormSection = document.getElementById('modalResolverFormSection');
   modalResolverFormSection.innerHTML = '';
   if (ticket.estado === 'pendiente') {
@@ -311,53 +288,24 @@ function updateTicketModal(ticket) {
     `;
 
     const resolverForm = modalResolverFormSection.querySelector('.resolver-form');
-    resolverForm.addEventListener('submit', (e) => handleResolverSubmit(e, ticket._id));
+    resolverForm.addEventListener('submit', handleResolverSubmit);
   }
 
-  // Configurar el formulario de comentarios
+  const commentsList = document.getElementById('commentsList');
+  commentsList.innerHTML = ''; // Limpiar comentarios previos
+  document.getElementById('commentForm').reset(); // Resetea el formulario de comentarios
+
   const commentForm = document.getElementById('commentForm');
-  // Elimina cualquier evento previo para evitar duplicados
   const oldForm = commentForm.cloneNode(true);
   commentForm.parentNode.replaceChild(oldForm, commentForm);
-  
-  // Agrega el evento para manejar el comentario
-  oldForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(oldForm);
-    const payload = {
-      texto: formData.get('comment'),
-      fecha: new Date().toISOString(),
-    };
-    try {
-      const res = await fetch(`/tickets/${ticket._id}/comments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        const newComment = await res.json();
-        const commentsList = document.getElementById('commentsList');
-        addCommentToList(commentsList, newComment); // Agrega el comentario al listado
-        oldForm.reset(); // Limpia el formulario
-      } else {
-        console.error('Error al agregar comentario:', res.statusText);
-      }
-    } catch (error) {
-      console.error('Error al agregar comentario:', error);
-    }
-  });
-  
 
-  // Carga los comentarios del ticket actual
+  oldForm.addEventListener('submit', handleCommentSubmit);
+
   fetchComments(ticket._id, commentsList);
 }
 
-
 function closeTicketModal() {
-  openTicketId = null; // Limpia el ID del ticket abierto
+  openTicketId = null;
   const modal = document.getElementById('ticketModal');
   const overlay = document.getElementById('overlay');
 
@@ -366,25 +314,20 @@ function closeTicketModal() {
 
   isEditing = false;
 
-  // Limpia el contenido del modal
   const commentsList = document.getElementById('commentsList');
   commentsList.innerHTML = '';
 
-  // Limpia eventos del formulario de comentarios
   const commentForm = document.getElementById('commentForm');
   const newCommentForm = commentForm.cloneNode(true);
   commentForm.parentNode.replaceChild(newCommentForm, commentForm);
 
   if (pendingRefresh) {
     pendingRefresh = false;
-    fetchAllTickets(); // Refresca la lista de tickets si es necesario
+    fetchAllTickets();
   }
 }
 
-
-
-
-async function handleResolverSubmit(e, ticketId) {
+async function handleResolverSubmit(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
   const payload = {
@@ -401,7 +344,7 @@ async function handleResolverSubmit(e, ticketId) {
     estado: formData.get('estado'),
   };
   try {
-    const res = await fetch(`/tickets/${ticketId}`, {
+    const res = await fetch(`/tickets/${e.target.dataset.ticketId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -445,11 +388,10 @@ async function fetchComments(ticketId, commentsList) {
     if (res.ok) {
       const comments = await res.json();
 
-      // Limpia comentarios previos y reinicia el registro de IDs renderizados
       commentsList.innerHTML = '';
-      renderedCommentIds = new Set(); // Limpia el registro de IDs global
+      renderedCommentIds.clear();
 
-      comments.forEach((comment) => {
+      comments.forEach(comment => {
         if (!renderedCommentIds.has(comment._id)) {
           addCommentToList(commentsList, comment);
         }
@@ -462,18 +404,14 @@ async function fetchComments(ticketId, commentsList) {
   }
 }
 
-
-
 let renderedCommentIds = new Set();
-
 
 function addCommentToList(commentsList, comment) {
   if (renderedCommentIds.has(comment._id)) {
     console.log('Comentario ya renderizado, ignorando:', comment._id);
-    return; // Si el comentario ya existe, no lo agregamos
+    return;
   }
 
-  // Agregar comentario al registro
   renderedCommentIds.add(comment._id);
 
   const commentItem = document.createElement('li');
@@ -494,8 +432,6 @@ function addCommentToList(commentsList, comment) {
   commentsList.appendChild(commentItem);
 }
 
-
-
 async function handleCommentSubmit(e) {
   e.preventDefault();
   const formData = new FormData(document.getElementById('commentForm'));
@@ -515,8 +451,7 @@ async function handleCommentSubmit(e) {
     });
 
     if (res.ok) {
-      document.getElementById('commentForm').reset(); // Limpia el formulario
-      // No llamamos a addCommentToList aquí, dejamos que Socket.IO lo maneje
+      document.getElementById('commentForm').reset();
     } else {
       console.error('Error al agregar comentario:', res.statusText);
     }
@@ -524,7 +459,5 @@ async function handleCommentSubmit(e) {
     console.error('Error al agregar comentario:', error);
   }
 }
-
-
 
 fetchAllTickets();
