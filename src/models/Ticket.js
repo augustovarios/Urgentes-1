@@ -9,7 +9,7 @@ const generateShortId = () => {
 
 const TicketSchema = new mongoose.Schema({
   fecha: { type: Date, default: Date.now },
-  chasis: { type: String, required: true },
+  chasis: { type: String, },
   cod_pos: { type: String, required: true },
   cant: { type: Number, required: true },
   comentario: { type: String },

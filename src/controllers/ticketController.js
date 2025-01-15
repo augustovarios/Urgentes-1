@@ -149,19 +149,20 @@ exports.addComment = async (req, res) => {
     await ticket.save();
 
     const comentarioCompleto = await Ticket.findById(ticket._id)
-      .select('comentarios')
-      .populate('comentarios.usuario', 'username');
-
-    const comentarioAgregado = comentarioCompleto.comentarios.slice(-1)[0];
-
-    // Obtén la instancia de io:
-    const io = getIO();
-    io.emit('nuevoComentario', {
-      ticketId: ticket._id,
-      comentario: comentarioAgregado,
-    });
-
-    res.status(201).json(comentarioCompleto.comentarios.pop());
+    .select('comentarios')
+    .populate('comentarios.usuario', 'username');
+  
+  const comentarioAgregado = comentarioCompleto.comentarios.slice(-1)[0];
+  
+  // Emitir solo el comentario agregado
+  const io = getIO();
+  io.emit('nuevoComentario', {
+    ticketId: ticket._id, // Asociar explícitamente al ID del ticket
+    comentario: comentarioAgregado, // Emitir solo el comentario recién agregado
+  });
+  
+  res.status(201).json(comentarioAgregado); // Devolver solo el nuevo comentario
+  
   } catch (error) {
     console.error('Error al agregar comentario:', error);
     res.status(500).json({ message: 'Error interno del servidor' });

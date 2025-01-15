@@ -157,10 +157,10 @@ function renderTickets(tickets) {
       <thead>
         <tr>
           <th class="center-col">FECHA</th>
-          <th class="left-col">CHASIS</th>
-          <th class="left-col">COD/POS</th>
+          <th class="center-col">CHASIS</th>
+          <th class="center-col">COD/POS</th>
           <th class="center-col">CANT</th>
-          <th class="left-col">CLIENTE</th>
+          <th class="center-col">CLIENTE</th>
           <th class="left-col">COMENTARIO</th>
           <th class="center-col">NOTIF</th>
           <th class="center-col">AVISADO</th>
@@ -193,10 +193,10 @@ function renderTickets(tickets) {
     row.classList.add('ticket-header');
     row.innerHTML = `
       <td class="center-col">${fechaFormateada}</td>
-      <td class="left-col">${ticket.chasis || 'N/A'}</td>
-      <td class="left-col">${ticket.cod_pos || 'N/A'}</td>
-      <td class="center-col">${ticket.cant || 'N/A'}</td>
-      <td class="left-col">${ticket.cliente || 'N/A'}</td>
+      <td class="center-col">${ticket.chasis || '--'}</td>
+      <td class="center-col mayusc">${ticket.cod_pos || '--'}</td>
+      <td class="center-col">${ticket.cant || '--'}</td>
+      <td class="center-col">${ticket.cliente || '--'}</td>
       <td class="left-col">${ticket.comentario || 'N/A'}</td>
       <td class="center-col new-indicator" id="new-${ticket._id}">
         ${
@@ -233,11 +233,11 @@ function renderTickets(tickets) {
       detalleContent = `
         <span class="short-id">ID: ${ticket.shortId}</span>
         <table class="detalle-table">
-          <tr><th>RESOLUCIÓN</th><td>${ticket.resolucion || 'N/A'}</td></tr>
-          <tr><th>COD/POS</th><td>${ticket.codigo}</td></tr>
-          <tr><th>PROVEEDOR</th><td>${ticket.proveedor || 'N/A'}</td></tr>
-          <tr><th>INGRESO</th><td>${ticket.ingreso || 'N/A'}</td></tr>
-          <tr><th>COMENTARIO</th><td>${ticket.comentario_resolucion || 'N/A'}</td></tr>
+          <tr><th>RESOLUCIÓN</th><td>${ticket.resolucion || '--'}</td></tr>
+          <tr><th>COD/POS</th><td class="mayusc">${ticket.codigo}</td></tr>
+          <tr><th>PROVEEDOR</th><td>${ticket.proveedor || '--'}</td></tr>
+          <tr><th>INGRESO</th><td>${ticket.ingreso || '--'}</td></tr>
+          <tr><th>COMENTARIO</th><td>${ticket.comentario_resolucion || '--'}</td></tr>
           <tr><th>AVISADO</th><td>${ticket.avisado ? 'Sí' : 'No'}</td></tr>
           <tr><th>PAGO</th><td>${ticket.pago ? 'Sí' : 'No'}</td></tr>
         </table>
@@ -246,11 +246,11 @@ function renderTickets(tickets) {
       detalleContent = `
         <span class="short-id">ID: ${ticket.shortId}</span>
         <table class="detalle-table">
-          <tr><th>CHASIS</th><td>${ticket.chasis}</td></tr>
-          <tr><th>COD/POS</th><td>${ticket.cod_pos}</td></tr>
+          <tr><th>CHASIS</th><td>${ticket.chasis || '--'}</td></tr>
+          <tr><th>COD/POS</th><td class="mayusc">${ticket.cod_pos}</td></tr>
           <tr><th>CANT</th><td>${ticket.cant}</td></tr>
           <tr><th>CLIENTE</th><td>${ticket.cliente}</td></tr>
-          <tr><th>COMENTARIO</th><td>${ticket.comentario || 'N/A'}</td></tr>
+          <tr><th>COMENTARIO</th><td>${ticket.comentario || '--'}</td></tr>
           <tr><th>AVISADO</th><td>${ticket.avisado ? 'Sí' : 'No'}</td></tr>
           <tr><th>PAGO</th><td>${ticket.pago ? 'Sí' : 'No'}</td></tr>
         </table>
